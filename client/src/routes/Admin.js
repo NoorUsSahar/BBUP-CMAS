@@ -9,7 +9,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 
-import Dashboard from '../views/AdminEtc/Dashboard/IqraDashboard';
+import Dashboard from '../views/AdminEtc/Dashboard/Dashboard';
 import ManageDepartments from '../views/AdminEtc/Admin/Department/ManageDepartments';
 import ManagePrograms from '../views/AdminEtc/Admin/Program/ManagePrograms';
 import ManageCoordinators from '../views/AdminEtc/Admin/Users/ManageCoordinators';
@@ -19,6 +19,7 @@ import ManageMeritList from '../views/AdminEtc/Admin/Admission/ManageMeritList';
 import ManageAdmissions from '../views/AdminEtc/Admin/Admission/ManageAdmissions';
 import ManagePayroll from '../views/AdminEtc/Admin/Admission/ManagePayroll';
 import ManageFaculty from '../views/AdminEtc/Admin/Users/ManageFaculty';
+import ManageStudent from '../views/AdminEtc/Admin/Users/StudentAcademicRecord'
 import Settings from '../views/AdminEtc/Admin/Profiles/Settings';
 import Survey from '../views/AdminEtc/Admin/Survey/Survey_Landing_Admin.js'
 import Schedule from '../views/AdminEtc/Admin/Schedule/Schedule';
@@ -53,10 +54,10 @@ const routes = [
     layout: '/admin'
   },
   {
-    path: '/manage-applicants',
+    path: '/manage-students',
     name: 'Students',
     icon: AssignmentIndRoundedIcon,
-    component: ManageApplicant,
+    component: ManageStudent,
     layout: '/admin'
   },
   {
@@ -102,13 +103,7 @@ const routes = [
     component: ManageMeritList,
     layout: '/admin'
   },
-  {
-    path: '/manage-payrolls',
-    name: 'Payrolls',
-    icon: TollIcon,
-    component: ManagePayroll,
-    layout: '/admin'
-  },
+
   {
     path: '/survey',
     name: 'Survey',

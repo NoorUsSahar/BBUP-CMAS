@@ -73,25 +73,23 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 const Dashboard = ({
-  getCurrentProfile,
-  auth: { users },
-  profile: { profile, profiles, loading },
-  getProfiles,
+  // getCurrentProfile,
+  // auth: { users },
+  // profile: { profile, profiles, loading },
+  // getProfiles,
 
 
 }) => {
-  useEffect(() => {
-    getCurrentProfile();
-    getProfiles();
+  // useEffect(() => {
+  //   getCurrentProfile();
+  //   getProfiles();
 
-  }, [getCurrentProfile, getProfiles]);
+  // }, [getCurrentProfile, getProfiles]);
 
  
 
   const classes = useStyles();
-  return loading && profile === null ? (
-    <Spinner />
-  ) : (
+  return  (
     <Fragment>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -119,7 +117,7 @@ const Dashboard = ({
                               color="primary"
                               variant="outlined"
                               round
-                              href={"/add-information"}
+                              href="/faculty/add-information"
                               size="medium"
                             >
                               Add Marks
@@ -150,7 +148,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -175,7 +173,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -199,7 +197,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -223,7 +221,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -247,7 +245,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -271,7 +269,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -295,7 +293,7 @@ const Dashboard = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href="/add-information"
+                        href="/faculty/add-information"
                         size="medium"
                       >
                         Add Marks
@@ -320,22 +318,24 @@ const Dashboard = ({
   );
 };
 
-Dashboard.propTypes = {
-  getCurrentProfile: PropTypes.func.isRequired,
-  getProfiles: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
+// Dashboard.propTypes = {
+//   getCurrentProfile: PropTypes.func.isRequired,
+//   getProfiles: PropTypes.func.isRequired,
+//   auth: PropTypes.object.isRequired,
+//   profile: PropTypes.object.isRequired,
  
-};
+// };
 
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-  profile: state.profile,
+// const mapStateToProps = (state) => ({
+//   auth: state.auth,
+//   profile: state.profile,
   
-});
+// });
 
-export default connect(mapStateToProps, {
-  getCurrentProfile,
-  getProfiles
+// export default connect(mapStateToProps, {
+//   getCurrentProfile,
+//   getProfiles
   
-})(Dashboard);
+// })(Dashboard);
+
+export default Dashboard;

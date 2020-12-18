@@ -42,34 +42,32 @@ const switchRoutes = (
       return null;
     })}
     {/* <Route path='/faculty/create-department' component={CreateDepartment} /> */}
-    <Redirect from="/faculty" to="/faculty/dashboard" />
 
-    <Route exact path="/faculty/profile/:id" component={Profile}></Route>
+    <Route path="/faculty/profile/:id" component={Profile}></Route>
+
+    <Route path="/faculty/add-marks" component={AddMarks} />
+   <Route path="/faculty/select-course" component={SelectCourses} />
+   <Route path="/faculty/add-information" component={AddInfo}/>
 
     <Route
-      exact
       path="/faculty/create-profile"
       component={CreateProfile}
     ></Route>
     <Route exact path="/faculty/edit-profile" component={EditProfile}></Route>
     <Route
-      exact
       path="/faculty/add-research-papers"
       component={AddResearchPapers}
     ></Route>
-    <Route exact path="/faculty/add-education" component={AddEducation}></Route>
+    <Route path="/faculty/add-education" component={AddEducation}></Route>
     <Route
-      exact
       path="/faculty/add-experience"
       component={AddExperience}
     ></Route>
-    <Route exact path="/faculty/calendar" component={Calendar}></Route>
+    <Route path="/faculty/calendar" component={Calendar}></Route>
     <Route path="/faculty/survey_form/:id" component={Survey} />
 
-    <Route exact path="/faculty/add-Marks" component={AddMarks} ></Route>
-   <Route exact path="/faculty/select-course" component={SelectCourses} ></Route>
-   <Route exact path="/faculty/add-information" component={AddInfo}></Route>
-
+    <Redirect from="/faculty" to="/faculty/dashboard" />
+   
   </Switch>
 );
 

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
 // import Spinner from "../../layouts/Spinner";
-import { getAllSurveyForms } from "../../../actions/facultysc/survey.js";
+import { getAllSurveyForms } from "../../../actions/adminEtc/survey.js";
 // import { loadFaculty } from "../../../actions/auth";
 import Spinner from '../../../layouts/Spinner';
 import GridItem from "../../../components/Grid/GridItem.js";

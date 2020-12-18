@@ -73,31 +73,28 @@ const styles = {
 
 const useStyles = makeStyles(styles);
 const AddInfo = ({
-  getCurrentProfile,
-  auth: { users },
-  profile: { profile, profiles, loading },
-  getProfiles,
-
-
+  // getCurrentProfile,
+  // auth: { users },
+  // profile: { profile, profiles, loading },
+  // getProfiles,
 }) => {
-  useEffect(() => {
-    getCurrentProfile();
-    getProfiles();
-
-  }, [getCurrentProfile, getProfiles]);
-
- 
+  // useEffect(() => {
+  //   // getCurrentProfile();
+  //   // getProfiles();
+  // }, [getCurrentProfile, getProfiles]);
 
   const classes = useStyles();
-  return loading && profile === null ? (
-    <Spinner />
-  ) : (
+  return  (
+   
     <Fragment>
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite} style={{textAlign: "center"}}>
+              <h4
+                className={classes.cardTitleWhite}
+                style={{ textAlign: "center" }}
+              >
                 {" "}
                 Add Marks
               </h4>
@@ -106,166 +103,140 @@ const AddInfo = ({
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <Card>
-                  <CardHeader color="info">
-                  <h4 className={classes.cardTitleBlack}>
-                    Quiz 
-                     </h4>
-                  </CardHeader>
-                      <CardBody>
-                        <GridContainer>
-                          <GridItem>
+                    <CardHeader color="info">
+                      <h4 className={classes.cardTitleBlack}>Quiz</h4>
+                    </CardHeader>
+                    <CardBody>
+                      <GridContainer>
+                        <GridItem>
                           <Button
-                              color="primary"
-                              variant="outlined"
-                              round
-                              href={"/select-course"}
-                              size="medium"
-                              onClick={() => ("/select-course") }
-                            >
-                             Select courses
-                            </Button>
-                           
-                          </GridItem>
-                        </GridContainer>
-                      </CardBody>
-                    
+                            color="primary"
+                            variant="outlined"
+                            round
+                            href={"/faculty/select-course"}
+                            size="medium"
+                            onClick={() => "/faculty/select-course"}
+                          >
+                            Select courses
+                          </Button>
+                        </GridItem>
+                      </GridContainer>
+                    </CardBody>
 
                     <CardFooter stats></CardFooter>
                   </Card>
                 </GridItem>
-                
-
-
-
 
                 <GridItem xs={12} sm={12} md={6}>
                   <Card>
                     <CardHeader color="info">
                       <h4 className={classes.cardTitleBlack}>Assignment</h4>
                     </CardHeader>
-                    <CardBody>
-                     
-                    </CardBody>
+                    <CardBody></CardBody>
                     <CardFooter>
-                    <Button
-                              color="primary"
-                              variant="outlined"
-                              round
-                              href={"/select-course"}
-                              size="medium"
-                              onClick={() => ("/select-course") }
-                            >
-                             Select courses
-                            </Button>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        round
+                        href={"/faculty/select-course"}
+                        size="medium"
+                        onClick={() => "/faculty/select-course"}
+                      >
+                        Select courses
+                      </Button>
                     </CardFooter>
                   </Card>
                 </GridItem>
 
-
-
-                
                 <GridItem xs={12} sm={12} md={6}>
                   <Card>
                     <CardHeader color="info">
                       <h4 className={classes.cardTitleBlack}>Mid Term</h4>
                     </CardHeader>
-                    <CardBody>
-                     
-                    </CardBody>
+                    <CardBody></CardBody>
                     <CardFooter>
-                    <Button
-                              color="primary"
-                              variant="outlined"
-                              round
-                              href={"/select-course"}
-                              size="medium"
-                              onClick={() => ("/select-course") }
-                            >
-                             Select courses
-                            </Button>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        round
+                        href={"/faculty/select-course"}
+                        size="medium"
+                        onClick={() => "/faculty/select-course"}
+                      >
+                        Select courses
+                      </Button>
                     </CardFooter>
                   </Card>
                 </GridItem>
-
-
 
                 <GridItem xs={12} sm={12} md={6}>
                   <Card>
                     <CardHeader color="info">
                       <h4 className={classes.cardTitleBlack}>Project </h4>
                     </CardHeader>
-                    <CardBody>
-                     
-                    </CardBody>
+                    <CardBody></CardBody>
                     <CardFooter>
-                    <Button
-                              color="primary"
-                              variant="outlined"
-                              round
-                              href={"/select-course"}
-                              size="medium"
-                              onClick={() => ("/select-course") }
-                            >
-                             Select courses
-                            </Button>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        round
+                        href={"/faculty/select-course"}
+                        size="medium"
+                        onClick={() => "/faculty/select-course"}
+                      >
+                        Select courses
+                      </Button>
                     </CardFooter>
                   </Card>
                 </GridItem>
-
-
 
                 <GridItem xs={12} sm={12} md={6}>
                   <Card>
                     <CardHeader color="success">
                       <h4 className={classes.cardTitleBlack}>Final</h4>
                     </CardHeader>
-                    <CardBody>
-                     
-                    </CardBody>
+                    <CardBody></CardBody>
                     <CardFooter>
-                    <Button
-                              color="primary"
-                              variant="outlined"
-                              round
-                              href={"/select-course"}
-                              size="medium"
-                              onClick={() => ("/select-course") }
-                            >
-                             Select courses
-                            </Button>
+                      <Button
+                        color="primary"
+                        variant="outlined"
+                        round
+                        href={"/faculty/select-course"}
+                        size="medium"
+                        onClick={() => "/faculty/select-course"}
+                      >
+                        Select courses
+                      </Button>
                     </CardFooter>
                   </Card>
                 </GridItem>
-                
               </GridContainer>
-              <Button variant="contained" color="primary" >
-                Save 
+              <Button variant="contained" color="primary">
+                Save
               </Button>
             </CardBody>
           </Card>
         </GridItem>
       </GridContainer>
-
     </Fragment>
   );
 };
 
-AddInfo.propTypes = {
-  getCurrentProfile: PropTypes.func.isRequired,
-  getProfiles: PropTypes.func.isRequired,
-  auth: PropTypes.object.isRequired,
-  profile: PropTypes.object.isRequired,
- 
-};
+// AddInfo.propTypes = {
+//   getCurrentProfile: PropTypes.func.isRequired,
+//   getProfiles: PropTypes.func.isRequired,
+//   auth: PropTypes.object.isRequired,
+//   profile: PropTypes.object.isRequired,
+// };
 
-const mapStateToProps = (state) => ({
-  auth: state.auth,
-  profile: state.profile,
-  
-});
+// const mapStateToProps = (state) => ({
+//   auth: state.auth,
+//   profile: state.profile,
+// });
 
-export default connect(mapStateToProps, {
-  getCurrentProfile,
-  getProfiles
-  
-})(AddInfo);
+// export default connect(mapStateToProps, {
+//   getCurrentProfile,
+//   getProfiles,
+// })(AddInfo);
+
+export default AddInfo;

@@ -87,7 +87,7 @@ const Logins = () => {
                 <Admin />
                 Faculty Portal
               </Fab>
-              <Fab variant="extended"  color="secondary" className={classes.fab} href='/login/coordinator'>
+              <Fab variant="extended"  color="primary" className={classes.fab} href='/login/coordinator'>
                 <Admin />
                Coordinator Portal
               </Fab>

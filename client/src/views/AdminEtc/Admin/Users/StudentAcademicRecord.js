@@ -1,15 +1,15 @@
 import React, { useEffect, Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getCurrentProfile } from "../../../actions/adminEtc/studentprofile";
-import Spinner from "../../../layouts/Spinner";
-import GridItem from "../../../components/Grid/GridItem.js";
-import GridContainer from "../../../components/Grid/GridContainer.js";
-import { getProfiles } from "../../../actions/adminEtc/studentprofile";
-import Card from "../../../components/Card/Card.js";
-import CardHeader from "../../../components/Card/CardHeader.js";
-import CardBody from "../../../components/Card/CardBody.js";
-import CardFooter from "../../../components/Card/CardFooter.js";
+import { getCurrentProfile } from "../../../../actions/adminEtc/studentprofile";
+import Spinner from "../../../../layouts/Spinner";
+import GridItem from "../../../../components/Grid/GridItem.js";
+import GridContainer from "../../../../components/Grid/GridContainer.js";
+import { getProfiles } from "../../../../actions/adminEtc/studentprofile";
+import Card from "../../../../components/Card/Card.js";
+import CardHeader from "../../../../components/Card/CardHeader.js";
+import CardFooter from "../../../../components/Card/CardFooter.js";
+import CardBody from "../../../../components/Card/CardBody.js";
 import { Button } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core";
@@ -123,7 +123,7 @@ const Dashboard = ({
                       </GridContainer>
                     </CardBody>
 
-                    <CardFooter stats></CardFooter>
+                    {/* <CardFooter stats></CardFooter> */}
                   </Card>
                 </GridItem>
 

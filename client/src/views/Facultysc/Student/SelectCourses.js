@@ -119,7 +119,7 @@ const AddInfo = ({
                               color="primary"
                               variant="outlined"
                               round
-                              href={"/add-Marks"}
+                              href={"/faculty/add-Marks"}
                               size="medium"
                               onClick={() => ("/add-Marks") }
                             >
@@ -151,7 +151,7 @@ const AddInfo = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href={"/add-Marks"}
+                        href={"/faculty/add-Marks"}
                         size="medium"
                       >
                         Add Marks
@@ -176,7 +176,7 @@ const AddInfo = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href={"/add-Marks"}
+                        href={"/faculty/add-Marks"}
                         size="medium"
                       >
                         Add Marks
@@ -200,7 +200,7 @@ const AddInfo = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href={"/add-Marks"}
+                        href={"/faculty/add-Marks"}
                         size="medium"
                       >
                         Add Marks
@@ -224,7 +224,7 @@ const AddInfo = ({
                         color="primary"
                         variant="outlined"
                         round
-                        href={"/add-Marks"}
+                        href={"/faculty/add-Marks"}
                         size="medium"
                       >
                         Add Marks
