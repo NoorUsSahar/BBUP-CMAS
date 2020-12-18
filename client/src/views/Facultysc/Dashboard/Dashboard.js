@@ -8,6 +8,7 @@ import Spinner from "../../../layouts/Spinner";
 import GridItem from "../../../components/Grid/GridItem.js";
 import GridContainer from "../../../components/Grid/GridContainer.js";
 import { getFaculties } from "../../../actions/facultysc/profile";
+import { loadFaculty } from '../../../actions/facultysc/auth';
 import { getCurrentEvents } from "../../../actions/facultysc/event";
 import Card from "../../../components/Card/Card.js";
 import CardHeader from "../../../components/Card/CardHeader.js";
@@ -101,6 +102,7 @@ const Dashboard = ({
     <Spinner />
   ) : (
     <Fragment>
+      Dashboard
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
           <Card>

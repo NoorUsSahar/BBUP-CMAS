@@ -42,6 +42,8 @@ const switchRoutes = (
       return null;
     })}
     {/* <Route path='/faculty/create-department' component={CreateDepartment} /> */}
+    <Redirect from="/faculty" to="/faculty/dashboard" />
+
     <Route exact path="/faculty/profile/:id" component={Profile}></Route>
 
     <Route
@@ -64,23 +66,10 @@ const switchRoutes = (
     <Route exact path="/faculty/calendar" component={Calendar}></Route>
     <Route path="/faculty/survey_form/:id" component={Survey} />
 
-    <Route
-                exact
-                path="/add-Marks"
-                component={AddMarks}
-              ></Route>
-            <Route
-                exact
-                path="/select-course"
-                component={SelectCourses}
-              ></Route>
-            <Route
-                exact
-                path="/add-information"
-                component={AddInfo}
-              ></Route>
+    <Route exact path="/faculty/add-Marks" component={AddMarks} ></Route>
+   <Route exact path="/faculty/select-course" component={SelectCourses} ></Route>
+   <Route exact path="/faculty/add-information" component={AddInfo}></Route>
 
-    <Redirect from="/faculty" to="/faculty/dashboard" />
   </Switch>
 );
 
@@ -123,6 +112,7 @@ const Faculty = ({ ...rest }) => {
 
   return (
     <div className={classes.wrapper}>
+      
       <Sidebar
         routes={routes}
         logoText={"Faculty Portal"}
@@ -134,12 +124,16 @@ const Faculty = ({ ...rest }) => {
         {...rest}
       />
       <div className={classes.mainPanel} ref={mainPanel}>
+      
         <Navbar
           routes={routes}
           handleDrawerToggle={handleDrawerToggle}
           {...rest}
         />
         <Alert />
+        <div className={classes.content}>
+          <div className={classes.container}>{switchRoutes}</div>
+        </div>
         <div>
             <ChatBot user="faculty"></ChatBot>
           </div>

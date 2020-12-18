@@ -36,10 +36,10 @@ if (localStorage.getItem('token')) {
 }
 
 const App = () => {
-  useEffect(() => {
-    store.dispatch(loadUser());
-    store.dispatch(loadFaculty());
-  }, [loadFaculty() , loadUser()]);
+  // useEffect(() => {
+  //   store.dispatch(loadUser());
+  //   store.dispatch(loadFaculty());
+  // }, [loadFaculty() , loadUser()]);
 
   return (
     <Fragment>

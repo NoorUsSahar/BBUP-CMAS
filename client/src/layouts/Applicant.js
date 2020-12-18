@@ -7,6 +7,7 @@ import Navbar from '../components/Navbars/Admin';
 import Footer from '../components/Footer/Footer.js';
 import Sidebar from '../components/Sidebar/UndergraduateApplicant';
 import Alert from '../components/Alert/Alert';
+import ChatBot from "../components/ChatBot/ChatBot";
 
 import Dashboard from '../views/AdminEtc/Applicant/Dashboard';
 import UndergraduateProgramList from '../views/AdminEtc/Applicant/UndergraduateProgramList';
@@ -110,6 +111,9 @@ const Admin = ({ ...rest }) => {
         <div className={classes.content}>
           <div className={classes.container}>{switchRoutes}</div>
         </div>
+        <div>
+            <ChatBot user="faculty"></ChatBot>
+          </div>
         {/* <Footer /> */}
       </div>
     </div>

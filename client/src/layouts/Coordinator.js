@@ -7,7 +7,8 @@ import Navbar from '../components/Navbars/Admin';
 import Footer from '../components/Footer/Footer.js';
 import Sidebar from '../components/Sidebar/Admin';
 import Alert from '../components/Alert/Alert';
-
+import ChatBot from "../components/ChatBot/ChatBot";
+ 
 import ManageApplicant from '../views/AdminEtc/Coordinator/ManageApplicant';
 import ApplicantDetails from '../views/AdminEtc/Coordinator/ApplicantDetails';
 import ManageAnnouncement from '../views/AdminEtc/Coordinator/ManageAnnouncement';
@@ -174,6 +175,9 @@ const Coordinator = ({ ...rest }) => {
         <div className={classes.content}>
           <div className={classes.container}>{switchRoutes}</div>
         </div>
+        <div>
+            <ChatBot user="coordinator"></ChatBot>
+          </div>
         {/* <Footer /> */}
       </div>
     </div>
