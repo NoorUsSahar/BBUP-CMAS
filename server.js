@@ -1,7 +1,7 @@
 // 1. create an express server for backend
 const express = require('express');
 const connectDB = require('./config/db');
-
+const path = require ('path');
 const app = express();
 
 //connectDB
@@ -10,7 +10,7 @@ connectDB();
 //Initialze Middleware
 app.use(express.json({ limit: '2mb' }));
 
-app.get('/', (req, res) => res.send('API Running'));
+// app.get('/', (req, res) => res.send('API Running'));
 
 //Define Routes
 
@@ -41,12 +41,18 @@ app.use("/api/calendar", require("./routes/api/facultysc/calendarEvent"));
 app.use('/api/facultySurvey', require('./routes/api/facultysc/survey'));
 
 
+//Serve static assets in production
+
+if(process.env.NODE_ENV === "production"){
+    //set static folder
+    app.use(express.static('client/build'));
+
+    app.get('*' , (req,res) => {
+        res.sendFile(path.resolve(__dirname, 'client' , 'build' , 'index.html'));
+    })
+}
+
 const PORT = process.env.PORT || 5500;
-
-
-if(process.env.NODE_ENV === 'production'){
-    app.use(express.static('./client/build'));
-} 
 
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
