@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a54aad0f.chunk.css",
+    "main.js": "/static/js/main.ff981197.chunk.js",
+    "main.js.map": "/static/js/main.ff981197.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.3fd1c28a.js",
+    "runtime-main.js.map": "/static/js/runtime-main.3fd1c28a.js.map",
+    "static/css/2.9023a340.chunk.css": "/static/css/2.9023a340.chunk.css",
+    "static/js/2.ec51e110.chunk.js": "/static/js/2.ec51e110.chunk.js",
+    "static/js/2.ec51e110.chunk.js.map": "/static/js/2.ec51e110.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.ab1057a11f45dd30df9f3e003aca4695.js": "/precache-manifest.ab1057a11f45dd30df9f3e003aca4695.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.9023a340.chunk.css.map": "/static/css/2.9023a340.chunk.css.map",
+    "static/css/main.a54aad0f.chunk.css.map": "/static/css/main.a54aad0f.chunk.css.map",
+    "static/js/2.ec51e110.chunk.js.LICENSE.txt": "/static/js/2.ec51e110.chunk.js.LICENSE.txt",
+    "static/media/SBBWU.gif": "/static/media/SBBWU.b3eaa6d1.gif",
+    "static/media/bank.png": "/static/media/bank.6baeb6f7.png",
+    "static/media/logo.jpg": "/static/media/logo.12cf2fdc.jpg",
+    "static/media/notice-image.jpg": "/static/media/notice-image.4615aac8.jpg",
+    "static/media/profile.png": "/static/media/profile.4b1bb228.png",
+    "static/media/sbbu.jpg": "/static/media/sbbu.ce07e25f.jpg",
+    "static/media/sidebar-2.jpg": "/static/media/sidebar-2.310509c9.jpg",
+    "static/media/spinner.gif": "/static/media/spinner.0c6f34a3.gif"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3fd1c28a.js",
+    "static/css/2.9023a340.chunk.css",
+    "static/js/2.ec51e110.chunk.js",
+    "static/css/main.a54aad0f.chunk.css",
+    "static/js/main.ff981197.chunk.js"
+  ]
+}

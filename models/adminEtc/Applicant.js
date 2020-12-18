@@ -1,0 +1,209 @@
+const mongoose = require('mongoose');
+
+const ApplicantSchema = mongoose.Schema({
+  // To keep track who is the actual user account associated with application object
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user'
+  },
+  // To keep track of what type of applicant the user is i.e. Bachelors or Masters
+  type: {
+    type: Number
+  },
+  // To keep track of status of applicant form
+  status: {
+    type: Number,
+    default: 0
+  },
+  personalDetails: {
+    name: {
+      type: String
+    },
+    fatherName: {
+      type: String
+    },
+    email: {
+      type: String
+    },
+    // CNIC should remain like previous
+    cnic: {
+      number: {
+        type: String
+      },
+      frontPicture: {
+        type: String
+      },
+      backPicture: {
+        type: String
+      }
+    },
+    avatar: {
+      type: String
+    },
+    address: {
+      type: String
+    },
+    placeOfBirth: {
+      type: String
+    },
+    dateOfBirth: {
+      type: Date
+    },
+    phoneNumber: {
+      type: String
+    },
+    domicile: {
+      type: String
+    }
+  },
+  incomeDetails: {
+    monthlyIncome: {
+      type: Number
+    },
+    minimumYearlyIncome: {
+      type: Number
+    }
+  },
+  educationDetails: {
+    // Here is the details of the secondary education
+    secondaryEducationDetails: {
+      type: {
+        type: Number
+      },
+      institute: {
+        type: String
+      },
+      fieldOfStudy: {
+        type: String
+      },
+      from: {
+        type: Number
+      },
+      to: {
+        type: Number
+      },
+      obtainedMarks: {
+        type: Number
+      },
+      totalMarks: {
+        type: Number
+      },
+      picture: {
+        type: String
+      }
+    },
+    // Here is the details of the intermediate education
+    intermediateEducationDetails: {
+      type: {
+        type: Number
+      },
+      institute: {
+        type: String
+      },
+      fieldOfStudy: {
+        type: String
+      },
+      from: {
+        type: Number
+      },
+      to: {
+        type: Number
+      },
+      obtainedMarks: {
+        type: Number
+      },
+      totalMarks: {
+        type: Number
+      },
+      picture: {
+        type: String
+      }
+    },
+    // Here is the details of the bachelor education
+    bachelorEducationDetails: {
+      institute: {
+        type: String
+      },
+      fieldOfStudy: {
+        type: String
+      },
+      from: {
+        type: Number
+      },
+      to: {
+        type: Number
+      },
+      cgpa: {
+        type: Number
+      },
+      picture: {
+        type: String
+      }
+    },
+    ntsMarks: {
+      type: Number
+    },
+    universityTestScore: {
+      type: Number
+    },
+    totalAggregate: {
+      type: Number
+    }
+  },
+  appliedPrograms: [
+    {
+      programme: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'programme'
+      }
+    }
+  ],
+  registeredCourses: [
+    {
+      course: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'course'
+      }
+    }
+  ],
+  timeStamp: {
+    type: Date,
+    default: Date.now()
+  },
+  applicantVerified: {
+    type: Boolean,
+    default: false
+  },
+  applicantDiscarded: {
+    type: Boolean,
+    default: false
+  },
+  applicantForwarded: {
+    type: Boolean,
+    default: false
+  },
+  applicationForwarded: {
+    type: Boolean,
+    default: false
+  },
+  admission: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'admission'
+  },
+  feeDetails: {
+    challanPicture: {
+      type: String,
+      default: null
+    },
+    amountPaid: {
+      type: Number,
+      default: 0
+    }
+  },
+  isStudent: {
+    type: Boolean,
+    default: false
+  }
+});
+
+module.exports = Applicant = mongoose.model('applicant', ApplicantSchema);
