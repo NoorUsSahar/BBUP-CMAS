@@ -1,11 +1,11 @@
-import React, {  useEffect} from "react";
+import React, { useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { connect } from "react-redux";
 // import Moment from "react-moment";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import {getCurrentEvents} from '../../../actions/facultysc/event';
+import { getCurrentEvents } from "../../../actions/facultysc/event";
 import "../../../App.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Event_Popup from "./Event-Popup";
@@ -48,81 +48,70 @@ const styles = {
   },
 };
 const useStyles = makeStyles(styles);
-const EventCalendar = ({ event : { event }, getCurrentEvents }) => {
+const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
   useEffect(() => {
     getCurrentEvents();
   }, [getCurrentEvents]);
- let myEventList = []
- if (event != null){
-   
-  myEventList = event.event
- }
-//  const StyledButton = withStyles({
-//   root: {
-//     background: 'linear-gradient(45deg, #fafffa 30%, #fafffa 90%)',
-//     borderRadius: 3,
-//     border: 0,
-//     color: 'black',
-//     height: 48,
-//     padding: '0 30px',
-//     // boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
-//   },
-//   label: {
-//     textTransform: 'capitalize',
-//   },
-// })(Button);
 
- const classes = useStyles();
-  return(
+  let myEventList = [];
+
+  if (event != null) {
+    myEventList = event.event;
+  }
+  //  const StyledButton = withStyles({
+  //   root: {
+  //     background: 'linear-gradient(45deg, #fafffa 30%, #fafffa 90%)',
+  //     borderRadius: 3,
+  //     border: 0,
+  //     color: 'black',
+  //     height: 48,
+  //     padding: '0 30px',
+  //     // boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  //   },
+  //   label: {
+  //     textTransform: 'capitalize',
+  //   },
+  // })(Button);
+
+  const classes = useStyles();
+  return (
     <div className="App">
-        <GridContainer>
-          <GridItem xs={12} sm={12} md={12}>
-            <Card>
-            <CardHeader color="primary" >
-            
-            <GridItem xs={12} sm={12} md={9}>
-            <h1 className={classes.cardTitleWhite}>Calendar</h1>
-         
-                  <Event_Popup></Event_Popup>
-               
+      <GridContainer>
+        <GridItem xs={12} sm={12} md={12}>
+          <Card>
+            <CardHeader color="primary">
+              <GridItem xs={12} sm={12} md={9}>
+                <h1 className={classes.cardTitleWhite}>Calendar</h1>
+
+                <Event_Popup></Event_Popup>
               </GridItem>
-               
-            
-            
-              
-          </CardHeader>
-           
-              <CardBody>
+            </CardHeader>
+
+            <CardBody>
               <Calendar
-          localizer={localizer}
-          defaultDate={new Date()}
-          defaultView="month"
-           events={myEventList}
-      
-          style={{ height: "100vh" }}
-        />
-        
-              </CardBody>
-            </Card>
-          
-            </GridItem>
-        </GridContainer>
-       
-       
-      </div>
+                localizer={localizer}
+                defaultDate={new Date()}
+                defaultView="month"
+                events={myEventList}
+                style={{ height: "100vh" }}
+              />
+            </CardBody>
+          </Card>
+        </GridItem>
+      </GridContainer>
+    </div>
   );
-}
+};
 
 EventCalendar.propTypes = {
-  getCurrentEvents : PropTypes.func.isRequired,
+  getCurrentEvents: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
-  event : PropTypes.object.isRequired
+  event: PropTypes.object.isRequired,
 };
 
 const mapStateToProps = (state) => ({
   event: state.event,
   // auth: state.auth,
-
 });
 
-export default connect(mapStateToProps , {getCurrentEvents})(EventCalendar);
+export default connect(mapStateToProps, { getCurrentEvents })(EventCalendar);

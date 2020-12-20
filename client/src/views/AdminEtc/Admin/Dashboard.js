@@ -130,7 +130,7 @@ const Dashboard = ({
                           // color="info"
                           round
                           variant="contained"
-                          href="/admin/manage-coordinator"
+                          href="/admin/manage-coordinators"
                         >
                           Click here
                         </Button>
@@ -155,7 +155,7 @@ const Dashboard = ({
                           // color="info"
                           round
                           variant="contained"
-                          href="/admin/manage-applicant"
+                          href="/admin/manage-applicants"
                         >
                           Click here
                         </Button>
@@ -180,7 +180,7 @@ const Dashboard = ({
                           // color="info"
                           round
                           variant="contained"
-                          href="/admin/manage-fstudent"
+                          href="/admin/manage-students"
                         >
                           Click here
                         </Button>

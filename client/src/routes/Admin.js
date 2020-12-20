@@ -53,7 +53,7 @@ const routes = [
   //   layout: '/admin'
   // },
   {
-    path: '/scheule',
+    path: '/schedule',
     name: 'Schedule',
     icon: DashboardIcon,
     component: Schedule,
