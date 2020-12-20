@@ -19,7 +19,7 @@ import Profiles from '../views/Facultysc/Profiles/Profiles';
 // import EditProfile from '../layouts/EditProfile'
 import Calendar from '../views/Facultysc/Calendar/Calendar';
 import UserProfile from '../views/Facultysc/UserProfile/UserProfile';
-
+import GradeIcon from '@material-ui/icons/Grade';
 
 const routes = [
   {
@@ -66,7 +66,7 @@ component: Profiles,
   {
     path: '/student-marks',
     name: 'Grades',
-    icon: Notifications,
+    icon: GradeIcon,
     component: StudentMarks,
     layout: '/faculty',
   },

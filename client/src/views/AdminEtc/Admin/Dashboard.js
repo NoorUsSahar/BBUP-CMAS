@@ -3,13 +3,6 @@ import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import {
-  getAdmissionSessions,
-  enableAdmissionSession,
-  disableAdmissionSession,
-  removeAdmissionSession,
-  generateMeritList
-} from '../../../actions/adminEtc/admission';
 import { loadUser } from '../../../actions/adminEtc/auth';
 import { makeStyles } from '@material-ui/core/styles';
 import GridContainer from '../../../components/Grid/GridContainer';
@@ -75,12 +68,6 @@ const styles = {
 const useStyles = makeStyles(styles);
 
 const Dashboard = ({
-  getAdmissionSessions,
-  enableAdmissionSession,
-  disableAdmissionSession,
-  removeAdmissionSession,
-  generateMeritList,
-  checkMeritStatus,
   loadUser,
   admission: { loading: admissionSessionsLoading, session, sessions },
   auth: { loading, user },
@@ -88,83 +75,10 @@ const Dashboard = ({
 }) => {
   const classes = useStyles(styles);
 
-  const [sessionList, setSessionList] = useState([]);
-
-  const getAdmissionSession = () => {
-    let res = [];
-    let i = 1;
-
-    sessionList.forEach(session => {
-      res = [
-        ...res,
-        [
-          `${i}`,
-          session.name,
-          <Moment format='DD-MMM-YYYY'>{session.startDate}</Moment>,
-          <Moment format='DD-MMM-YYYY'>{session.endDate}</Moment>,
-          <Fragment>
-            <Link
-              to={`/admin/update-session-details/${session._id}`}
-              className='text-decoration-none'
-            >
-              <Button
-                color='secondary'
-                variant='contained'
-                className='margin-left-right margin-top-bottom'
-              >
-                Update
-              </Button>
-            </Link>
-            {session.status ? (
-              <Button
-                variant='contained'
-                className='margin-left-right margin-top-bottom button-function'
-                onClick={() => disableAdmissionSession(session._id)}
-              >
-                Disable
-              </Button>
-            ) : (
-              <Button
-                variant='contained'
-                className='margin-left-right margin-top-bottom button-function'
-                onClick={() => {
-                  console.log('enable call hua');
-                  enableAdmissionSession(session._id);
-                }}
-              >
-                Enable
-              </Button>
-            )}
-            <Button
-              variant='contained'
-              className='margin-left-right margin-top-bottom button-danger'
-              onClick={() => removeAdmissionSession(session._id)}
-            >
-              Remove
-            </Button>
-          </Fragment>
-        ]
-      ];
-      i++;
-    });
-    return res;
-  };
-
-  const [
-    getAllAdmissionSessionsCalled,
-    setGetAllAdmissionSessionsCalled
-  ] = useState(false);
 
   useEffect(() => {
-    if (!getAllAdmissionSessionsCalled) {
-      getAdmissionSessions();
-      setGetAllAdmissionSessionsCalled(true);
-    }
 loadUser();
-    setSessionList(
-      !admissionSessionsLoading && sessions.length > 0 ? sessions : []
-    );
-  }, [sessions , loadUser()]);
+  }, [loadUser()]);
 
   return (
     <GridContainer>
@@ -220,11 +134,6 @@ loadUser();
 
 Dashboard.propTypes = {
   loadUser: PropTypes.func.isRequired,
-  getAdmissionSessions: PropTypes.func.isRequired,
-  enableAdmissionSession: PropTypes.func.isRequired,
-  disableAdmissionSession: PropTypes.func.isRequired,
-  removeAdmissionSession: PropTypes.func.isRequired,
-  generateMeritList: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
   admission: PropTypes.object.isRequired
@@ -237,9 +146,4 @@ const mapStateToProps = state => ({
 
 export default connect(mapStateToProps, {
   loadUser,
-  getAdmissionSessions,
-  enableAdmissionSession,
-  disableAdmissionSession,
-  removeAdmissionSession,
-  generateMeritList
 })(withRouter(Dashboard));

@@ -98,7 +98,7 @@ export const createProfile = (formData, history, edit = false) => async (
     // if(!edit){
     //   history.push('/dashboard');
     // }
-    history.push("/dashboard");
+    history.push("/faculty/dashboard");
   } catch (err) {
     const errors = err.response;
 
@@ -139,7 +139,7 @@ export const addResearchPapers = (formData, history) => async (dispatch) => {
 
     dispatch(setAlert("Research Paper Added", "success"));
 
-    history.push("/dashboard");
+    history.push("/faculty/dashboard");
   } catch (err) {
     const errors = err.response;
 
@@ -178,7 +178,7 @@ export const addEducation = (formData, history) => async (dispatch) => {
 
     dispatch(setAlert("Education Added", "success"));
 
-    history.push("/dashboard");
+    history.push("/faculty/dashboard");
   } catch (err) {
     const errors = err.response;
 
@@ -215,7 +215,7 @@ export const addExperience = (formData, history) => async (dispatch) => {
 
     dispatch(setAlert("Experience Added", "success"));
 
-    history.push("/dashboard");
+    history.push("/faculty/dashboard");
   } catch (err) {
     const errors = err.response;
 
