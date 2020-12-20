@@ -4,7 +4,6 @@ import ViewListIcon from '@material-ui/icons/ViewList';
 import SurroundSoundRoundedIcon from '@material-ui/icons/SurroundSoundRounded';
 import AssignmentIndRoundedIcon from '@material-ui/icons/AssignmentIndRounded';
 import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
-import TollIcon from '@material-ui/icons/Toll';
 import FaceIcon from '@material-ui/icons/Face';
 import SettingsIcon from '@material-ui/icons/Settings';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
@@ -25,41 +24,34 @@ import Survey from '../views/AdminEtc/Admin/Survey/Survey_Landing_Admin.js'
 import Schedule from '../views/AdminEtc/Admin/Schedule/Schedule';
 
 const routes = [
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    icon: DashboardIcon,
-    component: Dashboard,
-    layout: '/admin'
-  },
-  {
-    path: '/manage-faculty',
-    name: 'Faculty',
-    icon: FaceIcon,
-    component: ManageFaculty,
-    layout: '/admin',
-  },
-  {
-    path: '/manage-coordinators',
-    name: 'Coordinators',
-    icon: SupervisedUserCircleIcon,
-    component: ManageCoordinators,
-    layout: '/admin'
-  },
-  {
-    path: '/manage-applicants',
-    name: 'Applicants',
-    icon: AssignmentIndRoundedIcon,
-    component: ManageApplicant,
-    layout: '/admin'
-  },
-  {
-    path: '/manage-students',
-    name: 'Students',
-    icon: AssignmentIndRoundedIcon,
-    component: ManageStudent,
-    layout: '/admin'
-  },
+  // {
+  //   path: '/manage-faculty',
+  //   name: 'Faculty',
+  //   icon: FaceIcon,
+  //   component: ManageFaculty,
+  //   layout: '/admin',
+  // },
+  // {
+  //   path: '/manage-coordinators',
+  //   name: 'Coordinators',
+  //   icon: SupervisedUserCircleIcon,
+  //   component: ManageCoordinators,
+  //   layout: '/admin'
+  // },
+  // {
+  //   path: '/manage-applicants',
+  //   name: 'Applicants',
+  //   icon: AssignmentIndRoundedIcon,
+  //   component: ManageApplicant,
+  //   layout: '/admin'
+  // },
+  // {
+  //   path: '/manage-students',
+  //   name: 'Students',
+  //   icon: AssignmentIndRoundedIcon,
+  //   component: ManageStudent,
+  //   layout: '/admin'
+  // },
   {
     path: '/scheule',
     name: 'Schedule',
@@ -111,13 +103,6 @@ const routes = [
     component: Survey,
     layout: '/admin'
   },
-  // {
-  //   path: '/settings',
-  //   name: 'Profile',
-  //   icon: FaceIcon,
-  //   component: Settings,
-  //   layout: '/admin'
-  // },
   {
     path: '/settings',
     name: 'Settings',

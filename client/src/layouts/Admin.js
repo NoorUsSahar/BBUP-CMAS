@@ -39,6 +39,9 @@ import StudentEditProfile from '../views/AdminEtc/Admin/Users/EditStudentProfile
 import Profile from '../views/AdminEtc/StudentProfile/StudentProfile'
 import Profiles from '../views/AdminEtc/StudentProfiles/StudentProfiles.js'
 import Schedule from '../views/AdminEtc/Admin/Schedule/Schedule.js'
+import ManageCoordinators from '../views/AdminEtc/Admin/Users/ManageCoordinators';
+import ManageFaculty from '../views/AdminEtc/Admin/Users/ManageFaculty';
+import ManageStudent from '../views/AdminEtc/Admin/Users/StudentAcademicRecord'
 
 import routes from "../routes/Admin";
 
@@ -63,6 +66,10 @@ const switchRoutes = (
       }
       return null;
     })}
+    <Route path="/admin/manage-faculty" component={ManageFaculty} />
+    <Route path="/admin/manage-coordinators" component={ManageCoordinators} />
+    <Route path="/admin/manage-applicants" component={ManageApplicant} />
+    <Route path="/admin/manage-students" component={ManageStudent} />
     <Route path="/admin/create-department" component={CreateDepartment} />
     <Route
       path="/admin/create-undergraduate-program"
