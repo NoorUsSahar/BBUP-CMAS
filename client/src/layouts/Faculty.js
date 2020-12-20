@@ -63,7 +63,7 @@ const switchRoutes = (
       path="/faculty/add-experience"
       component={AddExperience}
     ></Route>
-    <Route path="/faculty/calendar" component={Calendar}></Route>
+    {/* <Route path="/faculty/calendar" component={Calendar}></Route> */}
     <Route path="/faculty/survey_form/:id" component={Survey} />
 
     <Redirect from="/faculty" to="/faculty/dashboard" />
