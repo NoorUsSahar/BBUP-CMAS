@@ -52,7 +52,7 @@ export const getCurrentEvents = ()=> async (dispatch) => {
       // if(!edit){
       //   history.push('/dashboard');
       // }
-      // history.push("/faculty/calendar");
+      history.push("/faculty/calendar");
     } catch (err) {
       const errors = err.response;
   

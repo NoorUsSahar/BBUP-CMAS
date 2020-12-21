@@ -446,7 +446,7 @@ const stepsForFaculty = [
       {
         value: "add-research-paper",
         label: "Add research paper",
-        component: <FindPage category="add-research-paper" user='faculty' />,
+        component: <FindPage category="add-research-papers" user='faculty' />,
         trigger: "8",
       },
       {
