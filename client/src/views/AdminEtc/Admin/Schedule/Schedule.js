@@ -1,6 +1,6 @@
-import * as React from 'react';
-import Paper from '@material-ui/core/Paper';
-import { ViewState, EditingState } from '@devexpress/dx-react-scheduler';
+import * as React from "react";
+import Paper from "@material-ui/core/Paper";
+import { ViewState, EditingState } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
   Appointments,
@@ -10,17 +10,22 @@ import {
   EditRecurrenceMenu,
   AllDayPanel,
   ConfirmationDialog,
-} from '@devexpress/dx-react-scheduler-material-ui';
-import { appointments } from './demo-data/appointments';
+} from "@devexpress/dx-react-scheduler-material-ui";
+import { appointments } from "./demo-data/appointments";
+import Card from "../../../../components/Card/Card.js";
+import CardHeader from "../../../../components/Card/CardHeader.js";
+import CardBody from "../../../../components/Card/CardBody.js";
+import GridItem from "../../../../components/Grid/GridItem.js";
+import GridContainer from "../../../../components/Grid/GridContainer.js";
 
-const  views = ['week', 'month'];
+const views = ["week", "month"];
 
 export default class Demo extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       data: appointments,
-      currentDate: '2018-06-27',
+      currentDate: "2018-06-27",
       addedAppointment: {},
       appointmentChanges: {},
       editingAppointment: undefined,
@@ -48,15 +53,19 @@ export default class Demo extends React.PureComponent {
     this.setState((state) => {
       let { data } = state;
       if (added) {
-        const startingAddedId = data.length > 0 ? data[data.length - 1].id + 1 : 0;
+        const startingAddedId =
+          data.length > 0 ? data[data.length - 1].id + 1 : 0;
         data = [...data, { id: startingAddedId, ...added }];
       }
       if (changed) {
-        data = data.map(appointment => (
-          changed[appointment.id] ? { ...appointment, ...changed[appointment.id] } : appointment));
+        data = data.map((appointment) =>
+          changed[appointment.id]
+            ? { ...appointment, ...changed[appointment.id] }
+            : appointment
+        );
       }
       if (deleted !== undefined) {
-        data = data.filter(appointment => appointment.id !== deleted);
+        data = data.filter((appointment) => appointment.id !== deleted);
       }
       return { data };
     });
@@ -64,287 +73,236 @@ export default class Demo extends React.PureComponent {
 
   render() {
     const {
-      currentDate, data, addedAppointment, appointmentChanges, editingAppointment,
+      currentDate,
+      data,
+      addedAppointment,
+      appointmentChanges,
+      editingAppointment,
     } = this.state;
 
     return (
-      <Paper>
-        <h1>Semester 1</h1>
-        <Scheduler
-          data={data}
-          height={660}
-          views={views}
-          defaultCurrentView="week"
-        defaultCurrentDate={currentDate}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
+      <GridContainer>
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 1</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler
+              data={data}
+              height={660}
+              views={views}
+              defaultCurrentView="week"
+              defaultCurrentDate={currentDate}
+            >
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 2</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 3</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 4</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 2</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 5</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 6</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 7</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
 
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 3</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 4</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 5</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 6</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 7</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-        <h1>Semester 8</h1>
-        <Scheduler
-          data={data}
-          height={660}
-        >
-          <ViewState
-            currentDate={currentDate}
-          />
-          <EditingState
-            onCommitChanges={this.commitChanges}
-
-            addedAppointment={addedAppointment}
-            onAddedAppointmentChange={this.changeAddedAppointment}
-
-            appointmentChanges={appointmentChanges}
-            onAppointmentChangesChange={this.changeAppointmentChanges}
-
-            editingAppointment={editingAppointment}
-            onEditingAppointmentChange={this.changeEditingAppointment}
-          />
-          <WeekView
-            startDayHour={9}
-            endDayHour={17}
-          />
-          <AllDayPanel />
-          <EditRecurrenceMenu />
-          <ConfirmationDialog />
-          <Appointments />
-          <AppointmentTooltip
-            showOpenButton
-            showDeleteButton
-          />
-          <AppointmentForm />
-        </Scheduler>
-      </Paper>
+        <Card>
+          <CardHeader color="primary">
+            <h1>Semester 8</h1>
+          </CardHeader>
+          <CardBody>
+            <Scheduler data={data} height={660}>
+              <ViewState currentDate={currentDate} />
+              <EditingState
+                onCommitChanges={this.commitChanges}
+                addedAppointment={addedAppointment}
+                onAddedAppointmentChange={this.changeAddedAppointment}
+                appointmentChanges={appointmentChanges}
+                onAppointmentChangesChange={this.changeAppointmentChanges}
+                editingAppointment={editingAppointment}
+                onEditingAppointmentChange={this.changeEditingAppointment}
+              />
+              <WeekView startDayHour={9} endDayHour={17} />
+              <AllDayPanel />
+              <EditRecurrenceMenu />
+              <ConfirmationDialog />
+              <Appointments />
+              <AppointmentTooltip showOpenButton showDeleteButton />
+              <AppointmentForm />
+            </Scheduler>
+          </CardBody>
+        </Card>
+      </GridContainer>
     );
-  } 
+  }
 }

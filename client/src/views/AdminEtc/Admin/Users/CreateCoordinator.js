@@ -55,7 +55,7 @@ const useStyles = makeStyles(styles);
 
 const CreateCoordinator = ({
   history,
-  department: { departments },
+  department: deptReducer,
   getAllDepartments,
   auth: { loading, isAuthenticated, user },
   setAlert,
@@ -104,10 +104,10 @@ const CreateCoordinator = ({
   const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
 
   useEffect(() => {
-    // if (!getAllDepartmentsCalled) {
-    //   getAllDepartments();
-    //   setGetAllDepartmentsCalled(true);
-    // }
+    if (!getAllDepartmentsCalled) {
+      getAllDepartments();
+      setGetAllDepartmentsCalled(true);
+    }
     getAllDepartments();
   }, [getAllDepartments]);
 
@@ -201,9 +201,9 @@ const CreateCoordinator = ({
                       <MenuItem value=''>
                         <em>None</em>
                       </MenuItem>
-                      {!loading &&
-                        departments.length > 0 &&
-                        departments.map(department => (
+                      {!deptReducer.loading &&
+                        deptReducer.departments.length > 0 &&
+                        deptReducer.departments.map(department => (
                           <MenuItem value={`${department._id}`}>
                             {department.name}
                           </MenuItem>
