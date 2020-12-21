@@ -2,17 +2,22 @@ import React, { useState, useEffect, Fragment } from "react";
 import "survey-react/survey.css";
 import * as Survey from "survey-react";
 import { connect } from "react-redux";
-import { getSurveyById, addSurveyResponse } from "../../../../actions/adminEtc/survey";
+import {
+  getSurveyById,
+  addSurveyResponse,
+} from "../../../../actions/adminEtc/survey";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import SurveyDates from "./SurveyDates";
 import Card from "../../../../components/Card/Card.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
-import Spinner from '../../../../layouts/Spinner';
+import Spinner from "../../../../layouts/Spinner";
+import { loadUser } from "../../../../actions/adminEtc/auth";
+
 // import CardIcon from "../../components/Card/CardIcon.js";
 import CardBody from "../../../../components/Card/CardBody.js";
 const SurveyForms = ({
-  // loadUser,
+  loadUser,
   auth: { user },
   getSurveyById,
   match,
@@ -22,20 +27,20 @@ const SurveyForms = ({
 }) => {
   const [isCompleted, formData, setFormData] = useState(false, {
     user_email: "",
-    survey_id :"",
+    survey_id: "",
     title: "",
-    satisfied : "",
+    satisfied: "",
     not_satisfied: "",
     neutral: "",
     department: "",
     course: "",
-    response : ""
+    response: "",
   });
 
   useEffect(() => {
     getSurveyById(match.params.id);
     addSurveyResponse();
-    // loadUser();
+    loadUser();
   }, []);
 
   Survey.Serializer.addProperty("page", {
@@ -85,31 +90,30 @@ const SurveyForms = ({
             }
           }
         });
-        var dep ;
-        var cour ;
-        if(!result.data.department){
-          dep ="";
-          cour ="";
-        }
-        else {
-          dep =result.data.department;
-          cour =result.data.Course_Title;
+        var dep;
+        var cour;
+        if (!result.data.department) {
+          dep = "";
+          cour = "";
+        } else {
+          dep = result.data.department;
+          cour = result.data.Course_Title;
         }
         var resultData = {
           user_email: user.email,
-          survey_id : survey_forms.survey_id,
+          survey_id: survey_forms.survey_id,
           title: survey_forms.title,
           satisfied: satisfied_score,
           not_satisfied: not_satisfied_score,
           neutral: neutral_score,
           department: dep,
           course: cour,
-          response : result.data
+          response: result.data,
         };
 
         addSurveyResponse(resultData, history);
         document.querySelector("#surveyResultHeader").innerHTML =
-          "Thankyou for Completing the survey"
+          "Thankyou for Completing the survey";
       }}
       showProgressBar={"top"}
     />
@@ -117,28 +121,34 @@ const SurveyForms = ({
   var surveyDisplay = !isCompleted ? survey : null;
   return (
     <Fragment>
-      {(loading  && user==null) ? (
-        <div> <Spinner></Spinner></div>
+      {loading && user == null ? (
+        <div>
+          {" "}
+          <Spinner></Spinner>
+        </div>
       ) : (
         <Fragment>
           <Card>
             {user == null ? (
-              <div><Spinner></Spinner></div>
-            ) :(
               <div>
-              {user.type == 0 ? ( <CardHeader color="primary">
-              <SurveyDates survey_id ={ match.params.id}></SurveyDates>
-              
-              </CardHeader>) : (<p></p>)}
+                <Spinner></Spinner>
+              </div>
+            ) : (
+              <div>
+                {user.type == 0 ? (
+                  <CardHeader color="primary">
+                    <SurveyDates survey_id={match.params.id}></SurveyDates>
+                  </CardHeader>
+                ) : (
+                  <p></p>
+                )}
               </div>
             )}
-            
-           
-           <CardBody>
-             
-            <div> {surveyDisplay}</div>
-            <h1 id="surveyResultHeader"></h1>
-            <div id="surveyResult"></div>
+
+            <CardBody>
+              <div> {surveyDisplay}</div>
+              <h1 id="surveyResultHeader"></h1>
+              <div id="surveyResult"></div>
             </CardBody>
           </Card>
         </Fragment>
@@ -149,7 +159,7 @@ const SurveyForms = ({
 SurveyForms.propTypes = {
   addSurveyResponse: PropTypes.func.isRequired,
   getSurveyById: PropTypes.func.isRequired,
-  // loadUser: PropTypes.func.isRequired,
+  loadUser: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -161,5 +171,5 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps, {
   addSurveyResponse,
   getSurveyById,
-  // loadUser,
+  loadUser,
 })(withRouter(SurveyForms));

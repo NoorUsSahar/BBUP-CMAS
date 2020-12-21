@@ -94,9 +94,9 @@ const Survey_Landing_Admin = ({
                                         {surveys.surveys.title}
                                       </StyledTableCell>
                                       <StyledTableCell align="right">
-                                        {user != null ? (
+                                      
                                           <div>
-                                            {user.type == 0 ? (
+                                            
                                               <div>
                                                 {/* <SurveyDates survey_id= {surveys._id}></SurveyDates>
                                               {surveys._id} */}
@@ -117,25 +117,9 @@ const Survey_Landing_Admin = ({
                                                   Generate Report
                                                 </Button>
                                               </div>
-                                            ) : (
-                                              <Button
-                                                color="primary"
-                                                round
-                                                href={`/applicant/survey_form/${surveys._id}`}
-                                                size="medium"
-                                              >
-                                                Fill Survey
-                                              </Button>
-                                            )}
+                                            
                                           </div>
-                                        ) : (
-                                          <div>
-                                            <CircularProgress
-                                              color="inherit"
-                                              align="center"
-                                            />
-                                          </div>
-                                        )}
+                                      
                                       </StyledTableCell>
                                     </StyledTableRow>
                                   </TableBody>

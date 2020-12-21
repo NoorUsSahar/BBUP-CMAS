@@ -7,7 +7,7 @@ import {
   addSurveyResponse,
   getSurveyEndDateById,
   getSurveyPublishDateById,
-} from "../../../actions/facultysc/survey";
+} from "../../../actions/adminEtc/survey";
 import { loadFaculty } from "../../../actions/facultysc/auth";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
