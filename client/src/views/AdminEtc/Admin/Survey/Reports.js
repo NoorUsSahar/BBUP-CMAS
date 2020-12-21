@@ -115,7 +115,7 @@ const Survey_Reports = ({
     <Fragment>
       {loading || responses == null ? (
         <div>
-          <Spinner></Spinner>
+         
           <CircularProgress color="inherit" />
 
         </div>

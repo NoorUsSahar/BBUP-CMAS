@@ -18,6 +18,7 @@ import Profiles from '../views/Facultysc/Profiles/Profiles';
  import EditProfile from '../views/Facultysc/Faculty/EditProfile'
 // import EditProfile from '../layouts/EditProfile'
 import Calendar from '../views/Facultysc/Calendar/Calendar';
+import UploadFile from '../views/Facultysc/UploadFile/UploadFile.js';
 import UserProfile from '../views/Facultysc/UserProfile/UserProfile';
 import GradeIcon from '@material-ui/icons/Grade';
 
@@ -31,14 +32,13 @@ const routes = [
     href : '/dashboard',
     layout: '/faculty',
   },
-  // {
-  //   path: '/edit-profile',
-  //   name: 'Edit Profile',
-  //   icon: EditProfileIcon,
-  //   component: EditProfile,
-  //   // href : 'google.com',
-  //   layout: '/faculty',
-  // },
+  {
+    path: '/upload-file',
+    name: 'Upload File',
+    icon: EditProfileIcon,
+    component: UploadFile,
+    layout: '/faculty',
+  },
     //   {
     //   path: '/profile/:id',
     //   name: 'User Profile',
