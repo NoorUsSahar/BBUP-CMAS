@@ -113,7 +113,7 @@ const Survey_Reports = ({
   // setSatisfied_response({satis});
   return (
     <Fragment>
-      {loading || responses == null ? (
+      {loading === null ? (
         <div>
          
           <CircularProgress color="inherit" />
@@ -121,7 +121,9 @@ const Survey_Reports = ({
         </div>
       ) : (
         <Fragment>
-          <div className="surveys">
+          {responses == null ? (<h1>No responses for this survey</h1>) : (
+            <Fragment>
+               <div className="surveys">
             <GridContainer xs={12} sm={12} md={12}>
               <GridItem xs={12} sm={6} md={12}>
                 <GridContainer>
@@ -243,7 +245,10 @@ const Survey_Reports = ({
               </GridItem>
             </GridContainer>
           </div>
-        </Fragment>
+      
+            </Fragment>
+          )}
+           </Fragment>
       )}
     </Fragment>
   );
