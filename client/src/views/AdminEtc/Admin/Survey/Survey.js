@@ -13,6 +13,7 @@ import Card from "../../../../components/Card/Card.js";
 import CardHeader from "../../../../components/Card/CardHeader.js";
 import Spinner from "../../../../layouts/Spinner";
 import { loadUser } from "../../../../actions/adminEtc/auth";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 // import CardIcon from "../../components/Card/CardIcon.js";
 import CardBody from "../../../../components/Card/CardBody.js";
@@ -124,7 +125,8 @@ const SurveyForms = ({
       {loading && user == null ? (
         <div>
           {" "}
-          <Spinner></Spinner>
+          <CircularProgress color="inherit" align="center" />
+
         </div>
       ) : (
         <Fragment>
