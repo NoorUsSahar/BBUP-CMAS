@@ -11,6 +11,7 @@ import CardHeader from "../../../../components/Card/CardHeader.js";
 import CardFooter from "../../../../components/Card/CardFooter.js";
 import CardBody from "../../../../components/Card/CardBody.js";
 import { Button } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import { makeStyles } from "@material-ui/core";
 const styles = {
@@ -86,8 +87,8 @@ const Dashboard = ({
   }, [getCurrentProfile, getProfiles]);
 
   const classes = useStyles();
-  return loading && profile === null ? (
-    <Spinner />
+  return loading && profile ===null ? (
+    <CircularProgress color="inherit" align="center" />
   ) : (
     <Fragment>
       <GridContainer>
@@ -169,8 +170,8 @@ const Dashboard = ({
                     </CardHeader>
                     <CardBody>
                       <Fragment>
-                        {loading ? (
-                          <Spinner />
+                        {profiles == [] ? (
+                         <CircularProgress color="inherit" align="center" />
                         ) : (
                           <Fragment>
                             <div className="profiles">
@@ -223,7 +224,8 @@ const Dashboard = ({
                                         </GridItem>
                                       ))
                                     ) : (
-                                      <h4>No Profiles Found</h4>
+            <CircularProgress color="inherit" align="center" />
+                                     
                                     )}
                                   </GridContainer>
                                 </GridItem>
@@ -240,45 +242,6 @@ const Dashboard = ({
           </Card>
         </GridItem>
       </GridContainer>
-
-      {/* {profile !== null ? (
-        <Fragment>
-          <div class="dash-buttons">
-            <Link to={`/profile/${faculty._id}`} class="btn btn-light">
-              <i class="fas fa-user-circle text-primary"></i> View Profile
-            </Link>
-            <Link to="/profiles" class="btn btn-light">
-              <i class="fas fa-user-circle text-primary"></i> Other Members.com
-            </Link>
-            <Link to="/edit-profile" class="btn btn-light">
-              <i class="fas fa-user-circle text-primary"></i> Edit Profile
-            </Link>
-            <Link to="/add-research-papers" class="btn btn-light">
-              <i class="fab fa-black-tie text-primary"></i> Add Research Papers
-            </Link>
-            <Link to="/add-experience" class="btn btn-light">
-              <i class="fab fa-black-tie text-primary"></i> Add Experience
-            </Link>
-            <Link to="/add-education" class="btn btn-light">
-              <i class="fas fa-graduation-cap text-primary"></i> Add Education
-            </Link>
-            <Link to="/calendar" class="btn btn-light">
-              <i class="fas fa-graduation-cap text-primary"></i> Calendar
-            </Link>
-          </div>
-          {/* <Calendar></Calendar> */}
-      {/* <ResearchPapers research_papers={profile.research_papers}></ResearchPapers>
-   
-          <Education education={profile.education}></Education> */}
-      {/* </Fragment> */}
-      {/* // ) : (
-        // <Fragment>
-        //   <p>You have not setup a profile , please add some info</p>
-        //   <Link to="/create-profile" className="btn btn-primary my-1">
-        //     Create Profile
-        //   </Link>
-        // </Fragment>
-      // )} */}
     </Fragment>
   );
 };

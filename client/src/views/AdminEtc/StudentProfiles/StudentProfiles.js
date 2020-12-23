@@ -17,6 +17,7 @@ import CardFooter from "../../../components/Card/CardFooter.js";
 import styles from "../../../assets/jss/material-dashboard-react/views/dashboardStyle.js";
 import avatar from "../../../assets/img/profile.png";
 import { Button } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles(styles);
 
@@ -29,8 +30,9 @@ const Profiles = ({ getProfiles, student_profile: { profiles, loading } }) => {
 
   return (
     <Fragment>
-      {loading ? (
-        <Spinner />
+      {loading  ? (
+           <CircularProgress color="inherit" align="center" />
+
       ) : (
         <Fragment>
           <div className="profiles">
@@ -90,7 +92,9 @@ const Profiles = ({ getProfiles, student_profile: { profiles, loading } }) => {
                     </GridItem>
                   ))
                 ) : (
-                  <h4>No Profiles Found</h4>
+    <CircularProgress color="inherit" align="center" />
+                  
+
                 )}
                
                </GridContainer>

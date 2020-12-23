@@ -95,14 +95,14 @@ export const addInfo = (formData, history, edit = false) => async (
     // if(!edit){
     //   history.push('/dashboard');
     // }
-    history.push("/admin/dashboard");
+    history.push("/admin/manage-students");
   } catch (err) {
     const errors = err.response;
 
     if (errors) {
       const err = errors.data;
-      // err.forEach(error => dispatch(setAlert(error.msg , 'danger')))
-      dispatch(setAlert("Info not Added , Please Recheck your fields"));
+      err.forEach(error => dispatch(setAlert(error.msg , 'danger')))
+      // dispatch(setAlert("Info not Added , Please Recheck your fields"));
       // dispatch(setAlert(" errors.data danger"));
     } else if (errors.request) {
       dispatch(setAlert("errr danger"));
