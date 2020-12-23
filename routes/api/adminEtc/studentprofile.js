@@ -38,12 +38,14 @@ router.post('/',[auth , [
 ]
 ],
 async(req, res)=>{
-     const errors=validationResult(req);
-     if(!errors.isEmpty()){
-         return res.status(400).json({errors: errors.array()});
-     }
+    //  const errors=validationResult(req);
+    //  if(!errors.isEmpty()){
+    //      return res.status(400).json({errors: errors.array()});
+    //  }
      const{
-       
+         Name ,
+         Program ,
+         phone_number,
         fatherName,
         cnic,
         semester,
@@ -67,13 +69,14 @@ async(req, res)=>{
         yearOfIntermediate,
         overseasEducation,
         section
-
-
-
      }=req.body;
      // Build profile object
      const profileFeilds ={};
      profileFeilds.user= req.user.id;
+     if(Name) profileFeilds.Name=Name;
+     if(phone_number) profileFeilds.phone_number=phone_number;
+     if(Program) profileFeilds.Program=Program;
+
      if(fatherName) profileFeilds.fatherName=fatherName;
      if(courses) profileFeilds.courses=courses;
      if(cnic) profileFeilds.cnic=cnic;
@@ -106,12 +109,12 @@ async(req, res)=>{
      if(District) profileFeilds.address.District=District;
 
      try{
-        let studentprofile= await StudentProfile.findOne({user:req.user.id});
+        let studentprofile= await StudentProfile.findOne({user:req.user._id});
        
         if(studentprofile){
             //updated
            studentprofile= await StudentProfile.findOneAndUpdate(
-            {user: req.user.id},
+            {user: req.user._id},
             {$set:profileFeilds},
             {new:true }
             );
@@ -129,6 +132,7 @@ async(req, res)=>{
      catch(err){
         console.error(err.message);
         res.status(500).send('Server Error ');
+        console.log("there was an error in server")
      }
    
     });

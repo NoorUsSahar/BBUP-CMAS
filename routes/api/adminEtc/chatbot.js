@@ -39,10 +39,6 @@ router.put(
   "/send-email-admin",
   // [check('email', 'Email is required').not().isEmpty()],
   async (req, res) => {
-    // smtpTransport.sendMail(mailOptions, (error, response) => {
-    //   error ? console.log(error) : console.log(response);
-    //   smtpTransport.close();
-    // });
 
     try {
       const { email, name, subject, body } = req.body;

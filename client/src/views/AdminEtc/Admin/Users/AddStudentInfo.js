@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/core/styles";
 import GridItem from "../../../../components/Grid/GridItem.js";
@@ -9,6 +9,7 @@ import CardBody from "../../../../components/Card/CardBody.js";
 import { Button } from "@material-ui/core";
 import { connect } from "react-redux";
 import {addInfo} from "../../../../actions/adminEtc/studentprofile";
+import { loadUser } from "../../../../actions/adminEtc/auth";
 import { withRouter } from "react-router-dom";
 import { TextField } from "@material-ui/core";
 
@@ -48,6 +49,10 @@ const useStyles = makeStyles(styles);
 
 const AddInfo = ({ addInfo, history }) => {
   const classes = useStyles();
+
+  useEffect(() => {
+    loadUser();
+  }, [loadUser()]);
 
   const [formData, setFormData] = useState({
     Name:'',
@@ -163,13 +168,9 @@ const AddInfo = ({ addInfo, history }) => {
                     name='fatherName'
                     value={fatherName}
                     onChange={e => onChange(e)}
-                    required={true}
+                    // required={true}
                   />
-                </GridItem>
-                <GridItem xs={12} sm={6} md={4}>
                 
-                </GridItem>
-              <GridItem xs={12} sm={6} md={4}>
                  
                 </GridItem>
                 <GridItem xs={12} sm={6} md={4}>
@@ -177,11 +178,11 @@ const AddInfo = ({ addInfo, history }) => {
                     className='form-control'
                     label="CNIC"
                     variant='outlined'
-                    type='text'
+                    type='number'
                     name='cnic'
                     value={cnic}
                     onChange={e => onChange(e)}
-                    required={true}
+                    // required={true}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={6} md={4}>
@@ -189,11 +190,11 @@ const AddInfo = ({ addInfo, history }) => {
                     className='form-control'
                     label="Semester"
                     variant='outlined'
-                    type='text'
+                    type='number'
                     name='semester'
                     value={semester}
                     onChange={e => onChange(e)}
-                    required={true}
+                    // required={true}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={6} md={4}>
@@ -205,7 +206,7 @@ const AddInfo = ({ addInfo, history }) => {
                     name='section'
                     value={section}
                     onChange={e => onChange(e)}
-                    required={true}
+                    // required={true}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={6} md={4}>
@@ -213,7 +214,7 @@ const AddInfo = ({ addInfo, history }) => {
                     className='form-control'
                     label="Date of Birth"
                     variant='outlined'
-                    type='text'
+                    type='date'
                     name='dateOfBirth'
                     value={dateOfBirth}
                     onChange={e => onChange(e)}
@@ -423,7 +424,7 @@ const AddInfo = ({ addInfo, history }) => {
                     className='form-control'
                     label='Year of Matriculation'
                     variant='outlined'
-                    type='text'
+                    type="date"
                     name='yearOfMariculatioin'
                     value={yearOfMariculatioin}
                     onChange={e => onChange(e)}
@@ -435,7 +436,7 @@ const AddInfo = ({ addInfo, history }) => {
                     className='form-control'
                     label='Year of Intermediate'
                     variant='outlined'
-                    type='text'
+                    type='date'
                     name='yearOfIntermediate'
                     value={yearOfIntermediate}
                     onChange={e => onChange(e)}
