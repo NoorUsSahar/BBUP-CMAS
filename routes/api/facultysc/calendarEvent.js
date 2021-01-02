@@ -4,6 +4,7 @@ const auth = require("../../../middleware/facultysc/auth");
 const { check, validationResult } = require("express-validator");
 
 const CalendarEvent = require("../../../models/facultysc/CalendarEvent");
+// const { TitleSharp } = require("@material-ui/icons");
 //const Faculty = require("../../models/Faculty");
 
 //@route        GET api/calendar/me
@@ -94,4 +95,17 @@ router.get("/me", auth, async (req, res) => {
     }
   );
   
+  // router.delete('/', auth, async (req, res) => {
+  //   const {
+  //     title 
+  //   } = req.body;
+  //   try {
+  //     await Course.findOneAndRemove({ title: TitleSharp});
+  
+  //     res.json({ msg: 'Course successfully removed' });
+  //   } catch (err) {
+  //     console.log(err.message);
+  //     return res.status(500).send('Server Error');
+  //   }
+  // });
   module.exports = router;

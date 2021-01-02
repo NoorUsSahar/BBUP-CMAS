@@ -9,11 +9,18 @@ import { getCurrentEvents } from "../../../actions/facultysc/event";
 import "../../../App.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Event_Popup from "./Event-Popup";
+import Moment from "react-moment";
 import GridItem from "../../../components/Grid/GridItem";
 import Card from "../../../components/Card/Card.js";
 import CardBody from "../../../components/Card/CardBody.js";
 import GridContainer from "../../../components/Grid/GridContainer.js";
 import CardHeader from "../../../components/Card/CardHeader";
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 // import { Button } from "@material-ui/core";
 const localizer = momentLocalizer(moment);
 
@@ -59,7 +66,48 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
     myEventList = event.event;
   }
 
+  const handleSelect = (
+    { start, end }
+    ) => {
+    const title = window.prompt('New Event name')
+    if (title)
+    window.prompt(title , start, end)
+      // this.setState({
+      //   events: [
+      //     myEventList,
+      //     {
+      //       start,
+      //       end,
+      //       title,
+      //     },
+      //   ],
+      // }
+      // )
+  }
 
+  //dialog open 
+  const [open, setOpen] = React.useState(false);
+  const [eventStart, setEventStart] = React.useState(false);
+  const [eventEnd, setEventEnd] = React.useState(false);
+  const [eventName, setEventName] = React.useState(false);
+
+  const handleClickOpen = (eventTitle , start , end) => {
+    setOpen(true);
+    setEventName(eventTitle);
+    setEventStart(start);
+    setEventEnd(end);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleEdit = () => {
+    setOpen(false);
+  };
+  const handleDelete = () => {
+    setOpen(false);
+  };
   const classes = useStyles();
   return (
     <div className="App">
@@ -76,12 +124,46 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
 
             <CardBody>
               <Calendar
+              popup
+              selectable = 'true'
                 localizer={localizer}
                 defaultDate={new Date()}
                 defaultView="month"
                 events={myEventList}
                 style={{ height: "100vh" }}
+                onSelectEvent={event => handleClickOpen(event.title , event.start , event.end)}
+                onSelectSlot={handleSelect}
+              // {event => alert(event.title)}
               />
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">{"This is your scheduled meeting"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+                   <p>Event : {eventName} <br></br>
+                  Start Date:  <Moment format="YYYY/MM/D">{eventStart}</Moment>
+                  <br></br>
+                  End Date : <Moment format="YYYY/MM/D">{eventEnd}</Moment>
+                    </p> 
+                    
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleEdit} color="primary">
+                    Edit
+                     </Button>
+                  <Button onClick={handleDelete} color="primary" >
+                    Delete
+                     </Button>
+                     <Button onClick={handleClose} color="primary" autoFocus>
+                    Close
+                     </Button>
+                </DialogActions>
+              </Dialog>
             </CardBody>
           </Card>
         </GridItem>
