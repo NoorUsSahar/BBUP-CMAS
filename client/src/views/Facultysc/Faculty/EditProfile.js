@@ -84,11 +84,6 @@ const useStyles = makeStyles(styles);
               ? ""
               : current_profile.courses_teaching.join(","),
           address: loading || !current_profile.address ? "" : current_profile.address,
-          //   twitter : loading || !profile.social ? '' : profile.twitter,
-          //   facebook : loading || !profile.social ? '' : profile.facebook,
-          //   linkedin : loading || !profile.social ? '' : profile.linkedin,
-          //   youtube : loading || !profile.social ? '' : profile.youtube,
-          //   instagram : loading || !profile.social ? '' : profile.instagram,
         });
       }, [loading]);
       const {

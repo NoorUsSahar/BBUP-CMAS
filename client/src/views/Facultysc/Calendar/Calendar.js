@@ -1,15 +1,16 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { withRouter } from "react-router-dom";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { connect } from "react-redux";
-// import Moment from "react-moment";
+import Moment from "react-moment";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import { getCurrentEvents } from "../../../actions/facultysc/event";
+import { getCurrentEvents, getEvent } from "../../../actions/facultysc/event";
+import { createEvent } from "../../../actions/facultysc/event";
 import "../../../App.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Event_Popup from "./Event-Popup";
-import Moment from "react-moment";
 import GridItem from "../../../components/Grid/GridItem";
 import Card from "../../../components/Card/Card.js";
 import CardBody from "../../../components/Card/CardBody.js";
@@ -21,6 +22,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import { TextField } from "@material-ui/core";
+
+
 // import { Button } from "@material-ui/core";
 const localizer = momentLocalizer(moment);
 
@@ -54,8 +58,80 @@ const styles = {
     },
   },
 };
+
 const useStyles = makeStyles(styles);
-const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
+
+const EventCalendar = ({ event: { event }, getCurrentEvents, getEvent , history , createEvent }) => {
+
+// create event 
+const [formData, setFormData] = useState({
+  title: "",
+  start: "",
+  end: "",
+});
+
+const { title, start, end } = formData;
+
+  //dialog open 
+  const [eventOpen, setEventOpen] = React.useState(false);
+  const [addEventOpen, setAddEventOpen] = React.useState(false);
+  const [eventStart, setEventStart] = React.useState(false);
+  const [eventEnd, setEventEnd] = React.useState(false);
+  const [eventName, setEventName] = React.useState(false);
+
+  const handleAddEventOpen = ({ startI, endI }) => {
+   
+    const startD = moment(startI).format("DD/MM/YYYY h:mm A");
+    const endD = moment(endI).format("DD MM YYYY h:mm A")
+    setEventStart(startD);
+    setEventEnd(endD);
+    setFormData({
+      start: startD,
+      end: endD
+    })
+   addEventOpenFunc();
+  };
+
+  const addEventOpenFunc = () => {
+   setAddEventOpen(true);
+  }
+  
+
+  const handleAddEventClose = () => {
+    setAddEventOpen(false);
+  };
+ 
+
+  const handleClickOpen = (eventId , eventTitle, start, end) => {
+    setEventOpen(true);
+    const startD = moment(start).format("DD MM YYYY h:mm:ss a");
+    const endD = moment(end).format("DD MM YYYY h:mm:ss a");
+    setEventStart(startD);
+    setEventEnd(endD);
+    setEventName(eventTitle)
+    getEvent(eventId);
+  };
+
+  const handleClose = () => {
+    setEventOpen(false);
+  };
+
+  const handleEdit = () => {
+    setEventOpen(false);
+  };
+  const handleDelete = () => {
+    setEventOpen(false);
+  };
+
+  
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onSubmit = (e) => {
+    e.preventDefault();
+    createEvent(formData, history);
+  };
+
   useEffect(() => {
     getCurrentEvents();
   }, [getCurrentEvents]);
@@ -66,48 +142,6 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
     myEventList = event.event;
   }
 
-  const handleSelect = (
-    { start, end }
-    ) => {
-    const title = window.prompt('New Event name')
-    if (title)
-    window.prompt(title , start, end)
-      // this.setState({
-      //   events: [
-      //     myEventList,
-      //     {
-      //       start,
-      //       end,
-      //       title,
-      //     },
-      //   ],
-      // }
-      // )
-  }
-
-  //dialog open 
-  const [open, setOpen] = React.useState(false);
-  const [eventStart, setEventStart] = React.useState(false);
-  const [eventEnd, setEventEnd] = React.useState(false);
-  const [eventName, setEventName] = React.useState(false);
-
-  const handleClickOpen = (eventTitle , start , end) => {
-    setOpen(true);
-    setEventName(eventTitle);
-    setEventStart(start);
-    setEventEnd(end);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handleEdit = () => {
-    setOpen(false);
-  };
-  const handleDelete = () => {
-    setOpen(false);
-  };
   const classes = useStyles();
   return (
     <div className="App">
@@ -124,19 +158,19 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
 
             <CardBody>
               <Calendar
-              popup
-              selectable = 'true'
+                popup
+                selectable='true'
                 localizer={localizer}
                 defaultDate={new Date()}
                 defaultView="month"
                 events={myEventList}
                 style={{ height: "100vh" }}
-                onSelectEvent={event => handleClickOpen(event.title , event.start , event.end)}
-                onSelectSlot={handleSelect}
+                onSelectEvent={event => handleClickOpen(event._id , event.title, event.start, event.end)}
+                onSelectSlot={handleAddEventOpen}
               // {event => alert(event.title)}
               />
               <Dialog
-                open={open}
+                open={eventOpen}
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
@@ -144,12 +178,12 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
                 <DialogTitle id="alert-dialog-title">{"This is your scheduled meeting"}</DialogTitle>
                 <DialogContent>
                   <DialogContentText id="alert-dialog-description">
-                   <p>Event : {eventName} <br></br>
-                  Start Date:  <Moment format="YYYY/MM/D">{eventStart}</Moment>
-                  <br></br>
-                  End Date : <Moment format="YYYY/MM/D">{eventEnd}</Moment>
-                    </p> 
-                    
+                    <p>Event : {eventName} <br></br>
+                  Start Date:  {eventStart}
+                      <br></br>
+                  End Date :{eventEnd}
+                    </p>
+
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
@@ -159,7 +193,73 @@ const EventCalendar = ({ event: { event }, getCurrentEvents }) => {
                   <Button onClick={handleDelete} color="primary" >
                     Delete
                      </Button>
-                     <Button onClick={handleClose} color="primary" autoFocus>
+                  <Button onClick={handleClose} color="primary" autoFocus>
+                    Close
+                     </Button>
+                </DialogActions>
+              </Dialog>
+
+              {/* Add Event Dialog Box */}
+              <Dialog
+                open={addEventOpen}
+                onClose={handleAddEventClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">{"Add a new Event"}</DialogTitle>
+                <DialogContent>
+                  <DialogContentText id="alert-dialog-description">
+
+                    Add an Event
+                  {/* Event Start:   {eventStart}
+                  Event End : {eventEnd} */}
+                  </DialogContentText>
+                  <form className='form' onSubmit={(e) => onSubmit(e)}>
+                   {eventStart}
+                    Title 
+                    <TextField
+                      className='form-control'
+                      label='Title'
+                      variant='outlined'
+                      type='text'
+                      name='title'
+                      value={title}
+                      onChange={(e) => onChange(e)}
+                      required={true}
+                    />
+                Start Date
+                <TextField
+                      className='form-control'
+                      variant='outlined'
+                      type='datetime-local'
+                      name='start'
+                      value={start}
+                      onChange={(e) => onChange(e)}
+                      required={true}
+                    />
+                 End Date
+                <TextField
+                      className='form-control'
+                      variant='outlined'
+                      type='datetime-local'
+                      name='end'
+                      value={end}
+                      onChange={(e) => onChange(e)}
+                      required={true}
+                    />
+                    <Button
+                      variant='contained'
+                      color='primary'
+                      size='large'
+                      type='submit'
+                      className='form-control'
+                    >
+                      Submit
+                </Button>
+                  </form>
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleAddEventClose} color="primary" autoFocus>
                     Close
                      </Button>
                 </DialogActions>
@@ -176,6 +276,8 @@ EventCalendar.propTypes = {
   getCurrentEvents: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   event: PropTypes.object.isRequired,
+  createEvent: PropTypes.func.isRequired,
+  getEvent:PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -183,4 +285,4 @@ const mapStateToProps = (state) => ({
   // auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getCurrentEvents })(EventCalendar);
+export default connect(mapStateToProps, { getCurrentEvents, createEvent , getEvent})(withRouter(EventCalendar));

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../../../middleware/facultysc/auth");
 const { check, validationResult } = require("express-validator");
-
+const ObjectId = require("mongodb").ObjectID;
 const CalendarEvent = require("../../../models/facultysc/CalendarEvent");
 // const { TitleSharp } = require("@material-ui/icons");
 //const Faculty = require("../../models/Faculty");
@@ -28,7 +28,36 @@ router.get("/me", auth, async (req, res) => {
       res.status(500).send("server error");
     }
   });
-  
+ 
+  //@route        GET api/calendar/me
+//@desc         Get event by its id
+//@access       Private
+router.get("/event/:eventId", auth , async (req, res) => {
+  try {
+    
+    const event = await CalendarEvent.findOne({
+      faculty: req.faculty.id , 
+      'event._id' : req.params.eventId  
+    },
+    {
+      'event.$' : 1
+      })
+;
+
+
+    if (!event) {
+      return res
+        .status(400)
+        .json({ msg: "There is no event for this profile" });
+    }
+console.log(event.event[0])
+    res.json(event.event[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("server error");
+  }
+});
+
   //@route        PUT api/calendar
   //@desc         Create or update calendar event
   //@access       Private
