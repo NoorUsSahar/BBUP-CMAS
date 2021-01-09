@@ -107,7 +107,7 @@ const Admin = ({ loginUser, auth: { loading, isAuthenticated, user } }) => {
   // };
 
   if (!loading && isAuthenticated && user !== null && user.type === 0) {
-    return <Redirect to='/admin' />;
+    return <Redirect to='/admin/dashboard' />;
   }
 
   return (
@@ -177,7 +177,12 @@ const Admin = ({ loginUser, auth: { loading, isAuthenticated, user } }) => {
                 className={classes.submit}
               >
                 {
-                  signIn == true ? (<CircularProgress color="secondary"/>) : (
+                  signIn == true  ? ( <p>
+                    {isAuthenticated  || loading == true ? (
+                    <CircularProgress color="secondary"/>
+                    ) : (<p>Sign In</p>)}
+                  </p>
+                  ) : (
                     <p> Sign In</p>
                   )
                 }
