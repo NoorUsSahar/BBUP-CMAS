@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Switch, Route, Redirect } from "react-router-dom";
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
@@ -7,13 +9,12 @@ import Navbar from "../components/Navbars/Faculty";
 import Sidebar from "../components/Sidebar/Faculty";
 import Alert from "../components/Alert/Alert";
 import ChatBot from "../components/ChatBot/ChatBot";
-
+import { loadFaculty } from '../actions/facultysc/auth';
 import AddResearchPapers from "../views/Facultysc/Faculty/AddResearchPapers.js";
 import AddEducation from "../views/Facultysc/Faculty/AddEducation";
 import AddExperience from "../views/Facultysc/Faculty/AddExperience";
 import CreateProfile from "../views/Facultysc/Faculty/CreateProfile";
 import EditProfile from "../views/Facultysc/Faculty/EditProfile";
-import Calendar from "../views/Facultysc/Calendar/Calendar";
 import Profile from "../views/Facultysc/UserProfile/UserProfile";
 import Survey from "../views/Facultysc/Survey/Survey";
 import SelectCourses from '../views/Facultysc/Student/SelectCourses';
@@ -73,7 +74,7 @@ const switchRoutes = (
 
 const useStyles = makeStyles(styles);
 
-const Faculty = ({ ...rest }) => {
+const Faculty = ({  loadFaculty , auth: { faculty , loading }, ...rest }) => {
   const classes = useStyles();
 
   const mainPanel = React.createRef();
@@ -106,6 +107,8 @@ const Faculty = ({ ...rest }) => {
       }
       window.removeEventListener("resize", resizeFunction);
     };
+
+    loadFaculty();
   }, [mainPanel]);
 
   return (
@@ -123,11 +126,24 @@ const Faculty = ({ ...rest }) => {
       />
       <div className={classes.mainPanel} ref={mainPanel}>
       
-        <Navbar
-          routes={routes}
-          handleDrawerToggle={handleDrawerToggle}
-          {...rest}
-        />
+      {
+        faculty == null ?  (
+          <Navbar
+          name = ""
+            routes={routes}
+            handleDrawerToggle={handleDrawerToggle}
+            {...rest}
+          />
+          ) : (
+            <Navbar
+            name = {faculty.name}
+              routes={routes}
+              handleDrawerToggle={handleDrawerToggle}
+              {...rest}
+            />
+          )
+      }
+        
         <Alert />
         <div className={classes.content}>
           <div className={classes.container}>{switchRoutes}</div>
@@ -141,4 +157,17 @@ const Faculty = ({ ...rest }) => {
   );
 };
 
-export default Faculty;
+Faculty.propTypes = {
+  loadFaculty: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, {
+  loadFaculty,
+})(Faculty);
+
+

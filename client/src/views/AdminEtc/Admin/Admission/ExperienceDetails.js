@@ -12,6 +12,7 @@ import CardHeader from '../../../../components/Card/CardHeader';
 import CardBody from '../../../../components/Card/CardBody';
 import StatusStepper from './StatusStepper';
 import { TextField, Button, Checkbox } from '@material-ui/core';
+import { useFormik } from 'formik';
 
 const styles = {
   cardCategoryWhite: {
@@ -20,11 +21,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -39,9 +40,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -50,7 +51,7 @@ const ExperienceDetails = ({
   updateAdminExperienceDetails,
   history,
   loadUser,
-  profile: { loading, profile }
+  profile: { loading, profile },
 }) => {
   const classes = useStyles();
 
@@ -67,7 +68,7 @@ const ExperienceDetails = ({
     }${date}`;
   };
 
-  const getToDate = toDate => {
+  const getToDate = (toDate) => {
     let d = new Date(toDate);
 
     const date = d.getDate();
@@ -79,7 +80,7 @@ const ExperienceDetails = ({
     }${date}`;
   };
 
-  const getFromDate = fromDate => {
+  const getFromDate = (fromDate) => {
     let d = new Date(fromDate);
 
     const date = d.getDate();
@@ -91,36 +92,8 @@ const ExperienceDetails = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    title: '',
-    company: '',
-    location: '',
-    from: '',
-    to: '',
-    current: false,
-    description: ''
-  });
-
-  const { title, company, location, from, to, current, description } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = e => {
-    e.preventDefault();
-    updateAdminExperienceDetails(formData, history);
-  };
-
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
-
-  useEffect(() => {
-    if (!getCurrentUserCalled) {
-      loadUser();
-      setGetCurrentUserCalled(true);
-    }
-
-    setFormData({
+  const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: {
       title:
         !loading && profile !== null && profile.experienceDetails
           ? profile.experienceDetails.title
@@ -144,13 +117,78 @@ const ExperienceDetails = ({
       current:
         !loading && profile !== null && profile.experienceDetails
           ? profile.experienceDetails.current
-          : '',
+          : false,
       description:
         !loading && profile !== null && profile.experienceDetails
           ? profile.experienceDetails.description
-          : ''
-    });
-  }, [profile]);
+          : '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateAdminExperienceDetails(values, history);
+    },
+  });
+
+  // const [formData, setFormData] = useState({
+  //   title: '',
+  //   company: '',
+  //   location: '',
+  //   from: '',
+  //   to: '',
+  //   current: false,
+  //   description: '',
+  // });
+
+  // const { title, company, location, from, to, current, description } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   updateAdminExperienceDetails(formData, history);
+  // };
+
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+
+  useEffect(() => {
+    // if (!getCurrentUserCalled) {
+    loadUser();
+    // setGetCurrentUserCalled(true);
+    // }
+
+    // setFormData({
+    //   title:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? profile.experienceDetails.title
+    //       : '',
+    //   company:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? profile.experienceDetails.company
+    //       : '',
+    //   location:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? profile.experienceDetails.location
+    //       : '',
+    //   from:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? getFromDate(profile.experienceDetails.from)
+    //       : getCurrentDate(),
+    //   to:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? getToDate(profile.experienceDetails.to)
+    //       : getCurrentDate(),
+    //   current:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? profile.experienceDetails.current
+    //       : '',
+    //   description:
+    //     !loading && profile !== null && profile.experienceDetails
+    //       ? profile.experienceDetails.description
+    //       : '',
+    // });
+  }, []);
 
   if (!loading && profile !== null && profile.status < 1) {
     return <Redirect to='/admin/create-profile' />;
@@ -170,7 +208,7 @@ const ExperienceDetails = ({
             <StatusStepper
               status={!loading && profile !== null ? profile.status : 0}
             />
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -179,9 +217,9 @@ const ExperienceDetails = ({
                     variant='outlined'
                     name='title'
                     type='text'
-                    value={title}
+                    value={values.title}
                     required={true}
-                    onChange={e => onChange(e)}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -191,9 +229,9 @@ const ExperienceDetails = ({
                     variant='outlined'
                     name='company'
                     type='text'
-                    value={company}
+                    value={values.company}
                     required={true}
-                    onChange={e => onChange(e)}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -203,9 +241,9 @@ const ExperienceDetails = ({
                     variant='outlined'
                     name='location'
                     type='text'
-                    value={location}
+                    value={values.location}
                     required={true}
-                    onChange={e => onChange(e)}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -215,9 +253,9 @@ const ExperienceDetails = ({
                     variant='outlined'
                     name='from'
                     type='date'
-                    value={from}
+                    value={values.from}
                     required={true}
-                    onChange={e => onChange(e)}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -227,17 +265,17 @@ const ExperienceDetails = ({
                     variant='outlined'
                     name='to'
                     type='date'
-                    value={to}
-                    onChange={e => onChange(e)}
-                    disabled={current}
+                    value={values.to}
+                    onChange={handleChange}
+                    disabled={values.current}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <Checkbox
                     className='form-control'
-                    checked={current}
-                    onChange={e => {
-                      setFormData({ ...formData, current: !current });
+                    checked={values.current}
+                    onChange={(e) => {
+                      setFieldValue('current', !values.current);
                     }}
                   />
                 </GridItem>
@@ -251,8 +289,8 @@ const ExperienceDetails = ({
                     type='text'
                     variant='outlined'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
+                    value={values.description}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -280,14 +318,14 @@ ExperienceDetails.propTypes = {
   updateAdminExperienceDetails: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  profile: state.profile
+const mapStateToProps = (state) => ({
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, {
   loadUser,
-  updateAdminExperienceDetails
+  updateAdminExperienceDetails,
 })(withRouter(ExperienceDetails));

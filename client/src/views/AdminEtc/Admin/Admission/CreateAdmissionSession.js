@@ -11,6 +11,8 @@ import Card from '../../../../components/Card/Card';
 import CardHeader from '../../../../components/Card/CardHeader';
 import CardBody from '../../../../components/Card/CardBody';
 import { TextField, Button } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -19,11 +21,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -31,11 +33,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -50,9 +52,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -62,7 +64,7 @@ const CreateAdmissionSession = ({
   createAdmissionSession,
   admission: { loading: admissionSessionsLoading, sessions },
   auth: { user },
-  history
+  history,
 }) => {
   const classes = useStyles(styles);
 
@@ -79,7 +81,7 @@ const CreateAdmissionSession = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -91,51 +93,76 @@ const CreateAdmissionSession = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    startDate: '',
-    endDate: '',
-    notification: ''
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      name: '',
+      startDate: getCurrentDate(),
+      endDate: getCurrentDate(),
+      notification: '',
+    },
+
+    onSubmit: (values) => {
+      createAdmissionSession(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      startDate: Yup.date().min(
+        new Date(Date.now() - 86400000),
+        'Start date is required'
+      ),
+      endDate: Yup.date().min(
+        Yup.ref('startDate'),
+        'End date cannot be before start date'
+      ),
+      notification: Yup.string().required('Notification is required'),
+    }),
   });
 
-  const { name, startDate, endDate, notification } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   startDate: '',
+  //   endDate: '',
+  //   notification: '',
+  // });
 
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+  // const { name, startDate, endDate, notification } = formData;
+
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
 
   useEffect(() => {
-    if (!getCurrentUserCalled) {
-      loadUser();
-      setGetCurrentUserCalled(true);
-    }
+    // if (!getCurrentUserCalled) {
+    loadUser();
+    // setGetCurrentUserCalled(true);
+    // }
 
-    setFormData({
-      name:
-        !admissionSessionsLoading && user !== null && user.sessions
-          ? user.sessions.name
-          : null,
-      startDate:
-        !admissionSessionsLoading && user !== null && user.sessions
-          ? getFormattedDate(user.sessions.startDate)
-          : getCurrentDate(),
-      endDate:
-        !admissionSessionsLoading && user !== null && user.sessions
-          ? getFormattedDate(user.sessions.endDate)
-          : getCurrentDate(),
-      notification:
-        !admissionSessionsLoading && user !== null && user.sessions
-          ? user.sessions.notification
-          : null
-    });
-  }, [user, sessions]);
+    // setFormData({
+    //   name:
+    //     !admissionSessionsLoading && user !== null && user.sessions
+    //       ? user.sessions.name
+    //       : null,
+    //   startDate:
+    //     !admissionSessionsLoading && user !== null && user.sessions
+    //       ? getFormattedDate(user.sessions.startDate)
+    //       : getCurrentDate(),
+    //   endDate:
+    //     !admissionSessionsLoading && user !== null && user.sessions
+    //       ? getFormattedDate(user.sessions.endDate)
+    //       : getCurrentDate(),
+    //   notification:
+    //     !admissionSessionsLoading && user !== null && user.sessions
+    //       ? user.sessions.notification
+    //       : null,
+    // });
+  }, []);
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const onSubmit = e => {
-    e.preventDefault();
-    createAdmissionSession(formData, history);
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   createAdmissionSession(formData, history);
+  // };
 
   return (
     <GridContainer>
@@ -148,54 +175,58 @@ const CreateAdmissionSession = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                     className='form-control'
                     label='Session Name'
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
+                    error={errors.startDate && touched.startDate}
+                    helperText={errors.startDate}
                     className='form-control'
                     label='StartDate'
                     variant='outlined'
                     type='date'
                     name='startDate'
-                    value={startDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.startDate}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
+                    error={errors.endDate && touched.endDate}
+                    helperText={errors.endDate}
                     className='form-control'
                     label='End Date'
                     variant='outlined'
                     type='date'
                     name='endDate'
-                    value={endDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.endDate}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
+                    error={errors.notification && touched.notification}
+                    helperText={errors.notification}
                     className='form-control'
                     label='Notification'
                     variant='outlined'
                     type='text'
                     name='notification'
-                    value={notification}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.notification}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -222,12 +253,12 @@ CreateAdmissionSession.propTypes = {
   createAdmissionSession: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
-  admission: PropTypes.object.isRequired
+  admission: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   admission: state.admission,
-  auth: state.auth
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, { loadUser, createAdmissionSession })(

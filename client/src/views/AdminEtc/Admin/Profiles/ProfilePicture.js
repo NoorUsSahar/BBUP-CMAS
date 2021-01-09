@@ -1,7 +1,10 @@
-import React, { Fragment, useState } from 'react';
+import React, {  useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { uploadProfilePicture, removeProfilePicture } from '../../../../actions/adminEtc/auth';
+import {
+  uploadProfilePicture,
+  removeProfilePicture,
+} from '../../../../actions/adminEtc/auth';
 import { setAlert } from '../../../../actions/adminEtc/alert';
 import GridContainer from '../../../../components/Grid/GridContainer';
 import GridItem from '../../../../components/Grid/GridItem';
@@ -10,14 +13,7 @@ import CardHeader from '../../../../components/Card/CardHeader.js';
 import CardBody from '../../../../components/Card/CardBody.js';
 import { makeStyles } from '@material-ui/core';
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
   Button,
-  Box,
-  Checkbox
 } from '@material-ui/core';
 import { FormGroup, Input } from 'reactstrap';
 
@@ -28,11 +24,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -40,11 +36,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -59,23 +55,23 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
+      lineHeight: '1',
+    },
   },
   root: {
-    minWidth: 275
+    minWidth: 275,
   },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',
-    transform: 'scale(0.8)'
+    transform: 'scale(0.8)',
   },
   title: {
-    fontSize: 14
+    fontSize: 14,
   },
   pos: {
-    marginBottom: 12
-  }
+    marginBottom: 12,
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -84,7 +80,7 @@ const ProfilePicture = ({
   uploadProfilePicture,
   removeProfilePicture,
   setAlert,
-  avatar
+  avatar,
 }) => {
   const classes = useStyles(styles);
 
@@ -92,15 +88,15 @@ const ProfilePicture = ({
 
   const { image } = formData;
 
-  const onChange = e => {
+  const onChange = (e) => {
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = (e) => {
       setFormData({ ...formData, image: e.target.result });
     };
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (image === '') {
       setAlert('No image selected', 'danger');
@@ -120,13 +116,13 @@ const ProfilePicture = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={(e) => onSubmit(e)}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <div
                     style={{
                       textAlign: 'center',
-                      marginBottom: '10px'
+                      marginBottom: '10px',
                     }}
                   >
                     <img
@@ -135,12 +131,12 @@ const ProfilePicture = ({
                       style={{
                         width: '200px',
                         height: '200px',
-                        borderRadius: '50%'
+                        borderRadius: '50%',
                       }}
                     />
                   </div>
                   <FormGroup>
-                    <Input type='file' onChange={e => onChange(e)} />
+                    <Input type='file' onChange={(e) => onChange(e)} />
                   </FormGroup>
                   &nbsp;{' '}
                   <GridContainer align='center'>
@@ -150,7 +146,7 @@ const ProfilePicture = ({
                         variant='contained'
                         type='submit'
                       >
-                        Update Profile Picture
+                        Update
                       </Button>
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
@@ -160,7 +156,7 @@ const ProfilePicture = ({
                         type='submit'
                         onClick={() => removeProfilePicture()}
                       >
-                        Remove Profile Picture
+                        Remove
                       </Button>
                     </GridItem>
                   </GridContainer>
@@ -178,11 +174,11 @@ ProfilePicture.propTypes = {
   uploadProfilePicture: PropTypes.func.isRequired,
   removeProfilePicture: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
-  avatar: PropTypes.string.isRequired
+  avatar: PropTypes.string.isRequired,
 };
 
 export default connect(null, {
   uploadProfilePicture,
   removeProfilePicture,
-  setAlert
+  setAlert,
 })(ProfilePicture);

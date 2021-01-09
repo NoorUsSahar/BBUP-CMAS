@@ -6,7 +6,7 @@ import Menu from '@material-ui/icons/Menu';
 import AdminNavbarLinks from './AdminNavbarLinks.js';
 import Button from '../CustomButtons/Button.js';
 import { AppBar, Toolbar, IconButton, Hidden } from '@material-ui/core';
-
+import {  loadUser } from '../../actions/adminEtc/auth';
 import styles from '../../assets/jss/material-dashboard-react/components/headerStyle.js';
 
 const useStyles = makeStyles(styles);

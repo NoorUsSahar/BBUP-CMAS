@@ -11,7 +11,7 @@ import styles from '../../assets/jss/material-dashboard-react/components/headerS
 
 const useStyles = makeStyles(styles);
 
-const Admin = (props) => {
+const Faculty = (props) => {
   const classes = useStyles();
 
   function makeBrand() {
@@ -38,28 +38,38 @@ const Admin = (props) => {
             {makeBrand()}
           </Button> */}
         </div>
+      
         <Hidden smDown implementation='css'>
           <FacultyNavbarLinks />
         </Hidden>
+        
         <Hidden mdUp implementation='css'>
+        
           <IconButton
             color='inherit'
             aria-label='open drawer'
             onClick={props.handleDrawerToggle}
+            fontSize="large"
+            // label= {props.name}
           >
+           
             <Menu />
           </IconButton>
+          
         </Hidden>
+       
       </Toolbar>
+     
     </AppBar>
   );
 };
 
-Admin.propTypes = {
+Faculty.propTypes = {
   color: PropTypes.oneOf(['primary', 'info', 'success', 'warning', 'danger']),
   rtlActive: PropTypes.bool,
   handleDrawerToggle: PropTypes.func,
   routes: PropTypes.arrayOf(PropTypes.object),
+  name: PropTypes.string.isRequired
 };
 
-export default Admin;
+export default Faculty;

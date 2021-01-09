@@ -1,6 +1,6 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, {  useEffect } from "react";
 import PropTypes from "prop-types";
-import Moment from "react-moment";
+
 import { connect } from "react-redux";
 import { withRouter, Link } from "react-router-dom";
 import { loadUser } from "../../../actions/adminEtc/auth";
@@ -10,18 +10,17 @@ import GridItem from "../../../components/Grid/GridItem";
 import Card from "../../../components/Card/Card";
 import CardHeader from "../../../components/Card/CardHeader";
 import CardBody from "../../../components/Card/CardBody";
-import CardFooter from "../../../components/Card/CardFooter";
+
 import Calendar from "react-calendar";
-import Table from "../../../components/Table/Table.js";
+import Coordinator from '@material-ui/icons/People';
+import Faculty from '@material-ui/icons/Person';
+import Applicant from '@material-ui/icons/HowToReg';
+import Student from '@material-ui/icons/PersonPin';
+
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
+ 
   Button,
-  Box,
-  Checkbox,
+
 } from "@material-ui/core";
 
 const styles = {
@@ -71,7 +70,7 @@ const useStyles = makeStyles(styles);
 
 const Dashboard = ({
   loadUser,
-  admission: { loading: admissionSessionsLoading, session, sessions },
+  // admission: { loading: admissionSessionsLoading, session, sessions },
   auth: { loading, user },
   history,
 }) => {
@@ -83,6 +82,7 @@ const Dashboard = ({
 
   return (
     <GridContainer>
+     
       <GridItem xs={12} sm={12} md={12}>
         <Card>
           <CardHeader color="primary">
@@ -92,17 +92,21 @@ const Dashboard = ({
             <GridContainer>
               <GridItem xs={12} sm={12} md={6}>
                 <Card>
-                  <CardHeader color="warning">
-                    <GridContainer>
+                  <CardHeader color="warning" align = 'center' >
+                  <h2 className={classes.cardTitleBlack}>Manage Users </h2>
+                  </CardHeader>
+                  <CardBody>
+                  <GridContainer>
                       {" "}
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={8}>
+                        <Faculty/>
                         <h4 className={classes.cardTitleBlack}>
-                          Manage Faculty
+                          Manage faculty
                         </h4>
                       </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={4}>
                         <Button
-                          // color="info"
+                           color="info"
                           round
                           variant="contained"
                           href="/admin/manage-faculty"
@@ -111,23 +115,18 @@ const Dashboard = ({
                         </Button>
                       </GridItem>
                     </GridContainer>
-                  </CardHeader>
-                  <CardBody></CardBody>
-                </Card>
-              </GridItem>
-              <GridItem xs={12} sm={12} md={6}>
-                <Card>
-                  <CardHeader color="warning">
+                    <br></br>
                     <GridContainer>
                       {" "}
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={8}>
+                        <Coordinator/>
                         <h4 className={classes.cardTitleBlack}>
                           Manage Coordinator
                         </h4>
                       </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={4}>
                         <Button
-                          // color="info"
+                           color="info"
                           round
                           variant="contained"
                           href="/admin/manage-coordinators"
@@ -136,23 +135,18 @@ const Dashboard = ({
                         </Button>
                       </GridItem>
                     </GridContainer>
-                  </CardHeader>
-                  <CardBody></CardBody>
-                </Card>
-              </GridItem>
-              <GridItem xs={12} sm={12} md={6}>
-                <Card>
-                  <CardHeader color="danger">
+                    <br></br>
                     <GridContainer>
                       {" "}
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={8}>
+                        <Applicant/>
                         <h4 className={classes.cardTitleBlack}>
                           Manage applicant
                         </h4>
                       </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={4}>
                         <Button
-                          // color="info"
+                          color="info"
                           round
                           variant="contained"
                           href="/admin/manage-applicants"
@@ -161,23 +155,18 @@ const Dashboard = ({
                         </Button>
                       </GridItem>
                     </GridContainer>
-                  </CardHeader>
-                  <CardBody></CardBody>
-                </Card>
-              </GridItem>
-              <GridItem xs={12} sm={12} md={6}>
-                <Card>
-                  <CardHeader color="danger">
+                    <br></br>
                     <GridContainer>
                       {" "}
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={8}>
+                        <Student/>
                         <h4 className={classes.cardTitleBlack}>
                           Manage Student
                         </h4>
                       </GridItem>
-                      <GridItem xs={12} sm={12} md={6}>
+                      <GridItem xs={12} sm={12} md={4}>
                         <Button
-                          // color="info"
+                         color="info"
                           round
                           variant="contained"
                           href="/admin/manage-students"
@@ -186,21 +175,21 @@ const Dashboard = ({
                         </Button>
                       </GridItem>
                     </GridContainer>
-                  </CardHeader>
-                  <CardBody></CardBody>
+                    <br></br>
+                  </CardBody>
                 </Card>
               </GridItem>
-              <GridItem xs={12} sm={12} md={12}>
+              <GridItem xs={12} sm={12} md={6}>
                 <Card>
-                  <CardHeader color="warning">
-                    <h4 className={classes.cardTitleBlack}>Calendar </h4>
+                  <CardHeader  color="danger" align = 'center' >
+                    <h2 className={classes.cardTitleBlack}>Calendar </h2>
                   </CardHeader>
                   <CardBody>
                     <Calendar></Calendar>
                   </CardBody>
                 </Card>
               </GridItem>
-              <GridItem xs={12} sm={12} md={6}></GridItem>
+           
             </GridContainer>
           </CardBody>
         </Card>

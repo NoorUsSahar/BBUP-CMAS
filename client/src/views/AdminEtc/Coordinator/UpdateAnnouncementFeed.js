@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
 import {
   updateCoordinatorAnnouncementFeed,
-  getAnnouncementFeedById
+  getAnnouncementFeedById,
 } from '../../../actions/adminEtc/announcement';
 import { loadUser } from '../../../actions/adminEtc/auth';
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,8 +22,10 @@ import {
   TextField,
   Button,
   Box,
-  Checkbox
+  Checkbox,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -32,11 +34,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -44,11 +46,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -63,9 +65,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -77,7 +79,7 @@ const UpdateAnnouncementFeed = ({
   announcement: { feeds, feed, loading },
   auth: { user },
   history,
-  match
+  match,
 }) => {
   const classes = useStyles(styles);
 
@@ -94,7 +96,7 @@ const UpdateAnnouncementFeed = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -106,24 +108,15 @@ const UpdateAnnouncementFeed = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    message: '',
-    startDate: '',
-    endDate: ''
-  });
-
-  const { name, message, startDate, endDate } = formData;
-
-  const [getFeedById, setGetFeedById] = useState(false);
-
-  useEffect(() => {
-    if (!getFeedById) {
-      getAnnouncementFeedById(match.params.id);
-      setGetFeedById(true);
-    }
-
-    setFormData({
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
       name: !loading && feed !== null ? feed.name : '',
       message: !loading && feed !== null ? feed.message : '',
       startDate:
@@ -133,26 +126,82 @@ const UpdateAnnouncementFeed = ({
       endDate:
         !loading && feed !== null
           ? getFormattedDate(feed.endDate)
-          : getCurrentDate()
-    });
-  }, [feed]);
+          : getCurrentDate(),
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      updateCoordinatorAnnouncementFeed(match.params.id, values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Please enter the name below'),
+      message: Yup.string().required('Please enter the message below'),
+      startDate: Yup.date().min(Yup.ref('startDate'), 'Start date is required'),
+      endDate: Yup.date().min(
+        Yup.ref('startDate'),
+        'End date cannot be before start date'
+      ),
+    }),
+  });
 
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   message: '',
+  //   startDate: '',
+  //   endDate: ''
+  // });
 
-  useEffect(() => {
-    if (!getCurrentUserCalled) {
+  // const { name, message, startDate, endDate } = formData;
+
+  // const [getFeedById, setGetFeedById] = useState(false);
+
+  useEffect(
+    () => {
+      // if (!getFeedById) {
+      getAnnouncementFeedById(match.params.id);
+      // setGetFeedById(true);
+      // }
+
+      // setFormData({
+      //   name: !loading && feed !== null ? feed.name : '',
+      //   message: !loading && feed !== null ? feed.message : '',
+      //   startDate:
+      //     !loading && feed !== null
+      //       ? getFormattedDate(feed.startDate)
+      //       : getCurrentDate(),
+      //   endDate:
+      //     !loading && feed !== null
+      //       ? getFormattedDate(feed.endDate)
+      //       : getCurrentDate()
+      // });
+    },
+    [
+      // feed
+    ]
+  );
+
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+
+  useEffect(
+    () => {
+      // if (!getCurrentUserCalled) {
       loadUser();
-      setGetCurrentUserCalled(true);
-    }
-  }, [user, feeds]);
+      // setGetCurrentUserCalled(true);
+      // }
+    },
+    [
+      // user, feeds
+    ]
+  );
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  const onSubmit = e => {
-    e.preventDefault();
-    updateCoordinatorAnnouncementFeed(match.params.id, formData, history);
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   updateCoordinatorAnnouncementFeed(match.params.id, formData, history);
+  // };
+
   return (
     <GridContainer>
       <GridItem>
@@ -164,7 +213,7 @@ const UpdateAnnouncementFeed = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -173,9 +222,10 @@ const UpdateAnnouncementFeed = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -185,9 +235,10 @@ const UpdateAnnouncementFeed = ({
                     variant='outlined'
                     type='date'
                     name='startDate'
-                    value={startDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.startDate}
+                    onChange={handleChange}
+                    error={errors.startDate && touched.startDate}
+                    helperText={errors.startDate}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -197,9 +248,10 @@ const UpdateAnnouncementFeed = ({
                     variant='outlined'
                     type='date'
                     name='endDate'
-                    value={endDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.endDate}
+                    onChange={handleChange}
+                    error={errors.endDate && touched.endDate}
+                    helperText={errors.endDate}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -209,9 +261,10 @@ const UpdateAnnouncementFeed = ({
                     variant='outlined'
                     type='text'
                     name='message'
-                    value={message}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.message}
+                    onChange={handleChange}
+                    error={errors.message && touched.message}
+                    helperText={errors.message}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -243,16 +296,16 @@ UpdateAnnouncementFeed.propTypes = {
   loadUser: PropTypes.func.isRequired,
   announcement: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   announcement: state.announcement,
-  auth: state.auth
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
   loadUser,
   updateCoordinatorAnnouncementFeed,
-  getAnnouncementFeedById
+  getAnnouncementFeedById,
 })(withRouter(UpdateAnnouncementFeed));

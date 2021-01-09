@@ -17,8 +17,9 @@ import {
   Select,
   MenuItem,
   TextField,
-  Button
+  Button,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
 
 const styles = {
   cardCategoryWhite: {
@@ -27,11 +28,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -46,9 +47,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -57,7 +58,7 @@ const PersonalDetails = ({
   loadUser,
   updateAdminPersonalDetails,
   history,
-  profile: { profile, loading }
+  profile: { profile, loading },
 }) => {
   const classes = useStyles();
 
@@ -74,7 +75,7 @@ const PersonalDetails = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -86,35 +87,8 @@ const PersonalDetails = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    dateOfBirth: '',
-    description: '',
-    cnic: '',
-    type: ''
-  });
-
-  const { name, email, dateOfBirth, description, cnic, type } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = e => {
-    e.preventDefault();
-    updateAdminPersonalDetails(formData, history);
-  };
-
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
-
-  useEffect(() => {
-    if (!getCurrentUserCalled) {
-      loadUser();
-      setGetCurrentUserCalled(true);
-    }
-
-    setFormData({
+  const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: {
       name:
         !loading && profile !== null && profile.personalDetails
           ? profile.personalDetails.name
@@ -138,9 +112,69 @@ const PersonalDetails = ({
       type:
         !loading && profile !== null && profile.personalDetails
           ? profile.personalDetails.type
-          : ''
-    });
-  }, [profile]);
+          : '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateAdminPersonalDetails(values, history);
+    },
+  });
+
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   dateOfBirth: '',
+  //   description: '',
+  //   cnic: '',
+  //   type: '',
+  // });
+
+  // const { name, email, dateOfBirth, description, cnic, type } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   updateAdminPersonalDetails(formData, history);
+  // };
+
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+
+  useEffect(() => {
+    // if (!getCurrentUserCalled) {
+    loadUser();
+    //   setGetCurrentUserCalled(true);
+    // }
+
+    // setFormData({
+    //   name:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? profile.personalDetails.name
+    //       : '',
+    //   email:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? profile.personalDetails.email
+    //       : '',
+    //   dateOfBirth:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? getFormattedDate(profile.personalDetails.dateOfBirth)
+    //       : getCurrentDate(),
+    //   description:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? profile.personalDetails.description
+    //       : '',
+    //   cnic:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? profile.personalDetails.cnic
+    //       : '',
+    //   type:
+    //     !loading && profile !== null && profile.personalDetails
+    //       ? profile.personalDetails.type
+    //       : '',
+    // });
+  }, []);
 
   return (
     <GridContainer>
@@ -156,7 +190,7 @@ const PersonalDetails = ({
             <StatusStepper
               status={!loading && profile !== null ? profile.status : 0}
             />
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -165,8 +199,8 @@ const PersonalDetails = ({
                     variant='outlined'
                     name='name'
                     type='text'
-                    value={name}
-                    onChange={e => onChange(e)}
+                    value={values.name}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -177,8 +211,8 @@ const PersonalDetails = ({
                     variant='outlined'
                     type='text'
                     name='email'
-                    value={email}
-                    onChange={e => onChange(e)}
+                    value={values.email}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -189,8 +223,8 @@ const PersonalDetails = ({
                     variant='outlined'
                     type='date'
                     name='dateOfBirth'
-                    value={dateOfBirth}
-                    onChange={e => onChange(e)}
+                    value={values.dateOfBirth}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -201,8 +235,8 @@ const PersonalDetails = ({
                       labelId='type-label'
                       label='Status'
                       name='type'
-                      value={type}
-                      onChange={e => onChange(e)}
+                      value={values.type}
+                      onChange={handleChange}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -220,8 +254,8 @@ const PersonalDetails = ({
                     variant='outlined'
                     type='number'
                     name='cnic'
-                    value={cnic}
-                    onChange={e => onChange(e)}
+                    value={values.cnic}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -235,8 +269,8 @@ const PersonalDetails = ({
                     type='text'
                     variant='outlined'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
+                    value={values.description}
+                    onChange={handleChange}
                     required={true}
                   />
                 </GridItem>
@@ -264,14 +298,14 @@ PersonalDetails.propTypes = {
   updateAdminPersonalDetails: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
   auth: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  profile: state.profile
+const mapStateToProps = (state) => ({
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, {
   loadUser,
-  updateAdminPersonalDetails
+  updateAdminPersonalDetails,
 })(withRouter(PersonalDetails));

@@ -1,17 +1,14 @@
 import React, { Fragment , useEffect} from "react";
-import { AppBar, Toolbar, Button } from "@material-ui/core";
+import {  Button } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logout } from "../../actions/facultysc/auth";
 // import Profile from "../../views/UserProfile/Profile.js"
 import { getCurrentFaculty } from "../../actions/facultysc/profile";
-import ButtonGroup from "@material-ui/core/ButtonGroup";
-
-
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Person from '@material-ui/icons/Person';
+import Person from '@material-ui/icons/AccountCircle';
 import {
   MenuItem,
   MenuList,
@@ -30,7 +27,7 @@ const useStyles = makeStyles(styles);
 
 
  
-const FacultyNavbarLinks = ({ logout, getCurrentFaculty , profile: {profile} }) => {
+const FacultyNavbarLinks = ({ logout, getCurrentFaculty , profile }) => {
    
   const classes = useStyles();
   const [openProfile, setOpenProfile] = React.useState(null);
@@ -63,7 +60,11 @@ const FacultyNavbarLinks = ({ logout, getCurrentFaculty , profile: {profile} }) 
           className={classes.buttonLink}
         >
           <Person className={classes.icons} />
-          <Hidden mdUp implementation='css'>
+
+          {profile.current_profile== null ? (<h2></h2>): (
+          <h3> {" "} &nbsp; {profile.current_profile.faculty.name}</h3>
+          )}
+        <Hidden mdUp implementation='css'>
             <p className={classes.linkText}>Profile</p>
           </Hidden>
         </Button>

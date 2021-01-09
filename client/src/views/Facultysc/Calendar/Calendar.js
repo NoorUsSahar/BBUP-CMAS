@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import Moment from "react-moment";
 import { makeStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import { getCurrentEvents, getEvent } from "../../../actions/facultysc/event";
+import { getCurrentEvents, getEvent, updateEvent } from "../../../actions/facultysc/event";
 import { createEvent } from "../../../actions/facultysc/event";
 import "../../../App.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -23,64 +23,88 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { TextField } from "@material-ui/core";
+import Backdrop from '@material-ui/core/Backdrop';
 
 
 // import { Button } from "@material-ui/core";
 const localizer = momentLocalizer(moment);
 
-const styles = {
-  cardCategoryWhite: {
-    "&,& a,& a:hover,& a:focus": {
+const styles = makeStyles((theme) => (
+  {
+    cardCategoryWhite: {
+      "&,& a,& a:hover,& a:focus": {
+        color: "#FFFFFF",
+        margin: "0",
+        fontSize: "0.9rem",
+        marginTop: "0",
+        marginBottom: "0",
+      },
+      "& a,& a:hover,& a:focus": {
+        color: "#FFFFFF",
+      },
+    },
+    cardTitleWhite: {
       color: "#FFFFFF",
-      margin: "0",
-      fontSize: "0.9rem",
-      marginTop: "0",
-      marginBottom: "0",
+      fontSize: "2.3rem",
+      marginTop: "0px",
+      minHeight: "auto",
+      fontWeight: "300",
+      fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+      marginBottom: "3px",
+      textDecoration: "none",
+      "& small": {
+        color: "#777",
+        fontSize: "65%",
+        fontWeight: "400",
+        lineHeight: "1",
+      },
     },
-    "& a,& a:hover,& a:focus": {
-      color: "#FFFFFF",
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
     },
-  },
-  cardTitleWhite: {
-    color: "#FFFFFF",
-    fontSize: "2.3rem",
-    marginTop: "0px",
-    minHeight: "auto",
-    fontWeight: "300",
-    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
-    marginBottom: "3px",
-    textDecoration: "none",
-    "& small": {
-      color: "#777",
-      fontSize: "65%",
-      fontWeight: "400",
-      lineHeight: "1",
-    },
-  },
-};
+  }
+));
 
 const useStyles = makeStyles(styles);
 
-const EventCalendar = ({ event: { event }, getCurrentEvents, getEvent , history , createEvent }) => {
+const EventCalendar = ({ event: { event },
+  getCurrentEvents,
+  getEvent,
+  history,
+  createEvent,
+  updateEvent }) => {
 
-// create event 
-const [formData, setFormData] = useState({
-  title: "",
-  start: "",
-  end: "",
-});
+  // create event 
+  const [formData, setFormData] = useState({
+    title: "",
+    start: "",
+    end: "",
+  });
 
-const { title, start, end } = formData;
+  const { title, start, end } = formData;
+
+  //updateEvent
+  const [UEventformData, setUEventFormData] = useState({
+    id: "",
+    Updatetitle: "",
+    Updatestart: "",
+    Updateend: "",
+  });
+
+  const { id, Updatetitle, Updatestart, Updateend } = UEventformData;
 
   //dialog open 
   const [eventOpen, setEventOpen] = React.useState(false);
   const [addEventOpen, setAddEventOpen] = React.useState(false);
+  const [updateEventOpen, setUpdateEventOpen] = React.useState(false);
   const [eventStart, setEventStart] = React.useState(false);
   const [eventEnd, setEventEnd] = React.useState(false);
   const [eventName, setEventName] = React.useState(false);
+  const [idEvent, setidEvent] = React.useState(false);
 
   const handleAddEventOpen = ({ startI, endI }) => {
-   
+
     const startD = moment(startI).format("DD/MM/YYYY h:mm A");
     const endD = moment(endI).format("DD MM YYYY h:mm A")
     setEventStart(startD);
@@ -89,41 +113,47 @@ const { title, start, end } = formData;
       start: startD,
       end: endD
     })
-   addEventOpenFunc();
+    addEventOpenFunc();
   };
 
   const addEventOpenFunc = () => {
-   setAddEventOpen(true);
+    setAddEventOpen(true);
   }
-  
+
 
   const handleAddEventClose = () => {
     setAddEventOpen(false);
   };
- 
 
-  const handleClickOpen = (eventId , eventTitle, start, end) => {
+
+  const handleClickOpen = (eventId, eventTitle, startE, endE) => {
     setEventOpen(true);
-    const startD = moment(start).format("DD MM YYYY h:mm:ss a");
-    const endD = moment(end).format("DD MM YYYY h:mm:ss a");
+    const startD = moment(startE).format("DD MM YYYY h:mm:ss a");
+    const endD = moment(endE).format("DD MM YYYY h:mm:ss a");
     setEventStart(startD);
     setEventEnd(endD);
-    setEventName(eventTitle)
+    setEventName(eventTitle);
+    setidEvent(idEvent);
     getEvent(eventId);
+    setFormData({ ...formData, start: startD , end:endD });
   };
 
   const handleClose = () => {
     setEventOpen(false);
   };
 
+  const handleUpdateEventClose = () => {
+    setUpdateEventOpen(false);
+  }
   const handleEdit = () => {
     setEventOpen(false);
+    setUpdateEventOpen(true);
   };
   const handleDelete = () => {
     setEventOpen(false);
   };
 
-  
+
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -131,6 +161,14 @@ const { title, start, end } = formData;
     e.preventDefault();
     createEvent(formData, history);
   };
+
+  const onUpdateChange = (e) =>
+  setUEventFormData({ ...UEventformData, [e.target.name]: e.target.value, id: idEvent });
+
+  const onUpdateSubmit = (e) => {
+    e.preventDefault();
+    updateEvent(UEventformData, history);
+  }
 
   useEffect(() => {
     getCurrentEvents();
@@ -165,105 +203,172 @@ const { title, start, end } = formData;
                 defaultView="month"
                 events={myEventList}
                 style={{ height: "100vh" }}
-                onSelectEvent={event => handleClickOpen(event._id , event.title, event.start, event.end)}
+                onSelectEvent={event => handleClickOpen(event._id, event.title, event.start, event.end)}
                 onSelectSlot={handleAddEventOpen}
               // {event => alert(event.title)}
               />
-              <Dialog
-                open={eventOpen}
-                onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">{"This is your scheduled meeting"}</DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
-                    <p>Event : {eventName} <br></br>
+              {/* Event Dialog Box */}
+              <Backdrop className={classes.backdrop} >
+                <Dialog
+                  open={eventOpen}
+                  onClose={handleClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">{"This is your scheduled meeting"}</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      <p>Event : {eventName} <br></br>
                   Start Date:  {eventStart}
-                      <br></br>
+                        <br></br>
                   End Date :{eventEnd}
-                    </p>
+                      </p>
 
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleEdit} color="primary">
-                    Edit
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleEdit} color="primary">
+                      Edit
                      </Button>
-                  <Button onClick={handleDelete} color="primary" >
-                    Delete
+                    <Button onClick={handleDelete} color="primary" >
+                      Delete
                      </Button>
-                  <Button onClick={handleClose} color="primary" autoFocus>
-                    Close
+                    <Button onClick={handleClose} color="primary" autoFocus>
+                      Close
                      </Button>
-                </DialogActions>
-              </Dialog>
+                  </DialogActions>
+                </Dialog>
+              </Backdrop>
 
-              {/* Add Event Dialog Box */}
-              <Dialog
-                open={addEventOpen}
-                onClose={handleAddEventClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-              >
-                <DialogTitle id="alert-dialog-title">{"Add a new Event"}</DialogTitle>
-                <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+              {/* Update Event Dialog Box */}
+              <Backdrop className={classes.backdrop} >
+                <Dialog
+                  open={updateEventOpen}
+                  onClose={handleUpdateEventClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">{"Update new Event"}</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
 
-                    Add an Event
-                  {/* Event Start:   {eventStart}
-                  Event End : {eventEnd} */}
-                  </DialogContentText>
-                  <form className='form' onSubmit={(e) => onSubmit(e)}>
-                   {eventStart}
-                    Title 
+                    </DialogContentText>
+                    <form className='form' onSubmit={(e) => onUpdateSubmit(e)}>
+                     
+                    Title
                     <TextField
-                      className='form-control'
-                      label='Title'
-                      variant='outlined'
-                      type='text'
-                      name='title'
-                      value={title}
-                      onChange={(e) => onChange(e)}
-                      required={true}
-                    />
+                        className='form-control'
+                        label='Title'
+                        variant='outlined'
+                        type='text'
+                        name='Updatetitle'
+                        value={eventName}
+                        onChange={(e) => onUpdateChange(e)}
+                        required={true}
+                      />
                 Start Date
                 <TextField
-                      className='form-control'
-                      variant='outlined'
-                      type='datetime-local'
-                      name='start'
-                      value={start}
-                      onChange={(e) => onChange(e)}
-                      required={true}
-                    />
+                        className='form-control'
+                        variant='outlined'
+                        type='datetime-local'
+                        name='Updatestart'
+                        value={eventStart}
+                        onChange={(e) => onUpdateChange(e)}
+                        required={true}
+                      />
                  End Date
                 <TextField
-                      className='form-control'
-                      variant='outlined'
-                      type='datetime-local'
-                      name='end'
-                      value={end}
-                      onChange={(e) => onChange(e)}
-                      required={true}
-                    />
-                    <Button
-                      variant='contained'
-                      color='primary'
-                      size='large'
-                      type='submit'
-                      className='form-control'
-                    >
-                      Submit
+                        className='form-control'
+                        variant='outlined'
+                        type='datetime-local'
+                        name='Updateend'
+                        value={eventEnd}
+                        onChange={(e) => onUpdateChange(e)}
+                        required={true}
+                      />
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        type='submit'
+                        className='form-control'
+                      >
+                        Submit
                 </Button>
-                  </form>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleAddEventClose} color="primary" autoFocus>
-                    Close
+                    </form>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleUpdateEventClose} color="primary" autoFocus>
+                      Close
                      </Button>
-                </DialogActions>
-              </Dialog>
+                  </DialogActions>
+                </Dialog>
+              </Backdrop>
+
+              {/* Add Event Dialog Box */}
+              <Backdrop className={classes.backdrop} >
+                <Dialog
+                  open={addEventOpen}
+                  onClose={handleAddEventClose}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">{"Add a new Event"}</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+
+                    </DialogContentText>
+                    <form className='form' onSubmit={(e) => onSubmit(e)}>
+                      {eventStart}
+                    Title
+                    <TextField
+                        className='form-control'
+                        label='Title'
+                        variant='outlined'
+                        type='text'
+                        name='title'
+                        value={title}
+                        onChange={(e) => onChange(e)}
+                        required={true}
+                      />
+                Start Date
+                <TextField
+                        className='form-control'
+                        variant='outlined'
+                        type='datetime-local'
+                        name='start'
+                        value={start}
+                        onChange={(e) => onChange(e)}
+                        required={true}
+                      />
+                 End Date
+                <TextField
+                        className='form-control'
+                        variant='outlined'
+                        type='datetime-local'
+                        name='end'
+                        value={end}
+                        onChange={(e) => onChange(e)}
+                        required={true}
+                      />
+                      <Button
+                        variant='contained'
+                        color='primary'
+                        size='large'
+                        type='submit'
+                        className='form-control'
+                      >
+                        Submit
+                </Button>
+                    </form>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleAddEventClose} color="primary" autoFocus>
+                      Close
+                     </Button>
+                  </DialogActions>
+                </Dialog>
+              </Backdrop>
             </CardBody>
           </Card>
         </GridItem>
@@ -277,7 +382,8 @@ EventCalendar.propTypes = {
   auth: PropTypes.object.isRequired,
   event: PropTypes.object.isRequired,
   createEvent: PropTypes.func.isRequired,
-  getEvent:PropTypes.func.isRequired
+  getEvent: PropTypes.func.isRequired,
+  updateEvent: PropTypes.func.isRequired
 };
 
 const mapStateToProps = (state) => ({
@@ -285,4 +391,9 @@ const mapStateToProps = (state) => ({
   // auth: state.auth,
 });
 
-export default connect(mapStateToProps, { getCurrentEvents, createEvent , getEvent})(withRouter(EventCalendar));
+export default connect(mapStateToProps, {
+  getCurrentEvents,
+  createEvent,
+  getEvent,
+  updateEvent
+})(withRouter(EventCalendar));

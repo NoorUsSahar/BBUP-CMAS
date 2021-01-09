@@ -11,6 +11,8 @@ import { connect } from 'react-redux';
 import { createDepartment } from '../../../../actions/adminEtc/department';
 import { withRouter, Link } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -19,11 +21,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -38,9 +40,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -48,21 +50,43 @@ const useStyles = makeStyles(styles);
 const CreateDepartment = ({ createDepartment, history }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      createDepartment(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Description is required'),
+    }),
   });
 
-  const { name, description } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { name, description } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    createDepartment(formData, history);
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   createDepartment(formData, history);
+  // };
 
   return (
     <GridContainer>
@@ -75,16 +99,17 @@ const CreateDepartment = ({ createDepartment, history }) => {
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 className='form-control'
                 label='Name'
                 variant='outlined'
                 type='text'
                 name='name'
-                value={name}
-                onChange={e => onChange(e)}
-                required={true}
+                value={values.name}
+                onChange={handleChange}
+                error={errors.name && touched.name}
+                helperText={errors.name}
               />
               <TextField
                 className='form-control'
@@ -94,9 +119,10 @@ const CreateDepartment = ({ createDepartment, history }) => {
                 rows={5}
                 multiline
                 name='description'
-                value={description}
-                onChange={e => onChange(e)}
-                required={true}
+                value={values.description}
+                onChange={handleChange}
+                error={errors.description && touched.description}
+                helperText={errors.description}
               />
               <Button
                 color='secondary'
@@ -130,7 +156,7 @@ const CreateDepartment = ({ createDepartment, history }) => {
 
 CreateDepartment.propTypes = {
   createDepartment: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
 export default connect(null, { createDepartment })(

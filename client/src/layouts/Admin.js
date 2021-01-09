@@ -3,6 +3,9 @@ import { Switch, Route, Redirect } from "react-router-dom";
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import { makeStyles } from "@material-ui/core/styles";
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import Navbar from "../components/Navbars/Admin";
 import Sidebar from "../components/Sidebar/Admin";
 import Alert from "../components/Alert/Alert";
@@ -42,6 +45,7 @@ import Schedule from '../views/AdminEtc/Admin/Schedule/Schedule.js'
 import ManageCoordinators from '../views/AdminEtc/Admin/Users/ManageCoordinators';
 import ManageFaculty from '../views/AdminEtc/Admin/Users/ManageFaculty';
 import ManageStudent from '../views/AdminEtc/Admin/Users/StudentAcademicRecord'
+import {  loadUser } from '../actions/adminEtc/auth';
 
 import routes from "../routes/Admin";
 
@@ -145,7 +149,7 @@ const switchRoutes = (
 
 const useStyles = makeStyles(styles);
 
-const Admin = ({ ...rest }) => {
+const Admin = ({ loadUser , ...rest }) => {
   const classes = useStyles();
 
   const mainPanel = React.createRef();
@@ -178,6 +182,7 @@ const Admin = ({ ...rest }) => {
       }
       window.removeEventListener("resize", resizeFunction);
     };
+    loadUser();
   }, [mainPanel]);
 
   return (
@@ -221,4 +226,19 @@ const Admin = ({ ...rest }) => {
   );
 };
 
-export default Admin;
+
+
+Admin.propTypes = {
+  logout: PropTypes.func.isRequired,
+  loadUser : PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+};
+
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  profile: state.profile,
+});
+
+export default connect(mapStateToProps, {  loadUser})(Admin);
+

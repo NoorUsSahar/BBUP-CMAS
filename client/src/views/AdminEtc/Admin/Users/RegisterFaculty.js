@@ -17,8 +17,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -27,11 +29,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -46,9 +48,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -56,48 +58,73 @@ const useStyles = makeStyles(styles);
 const RegisterFaculty = ({
   registerFaculty,
   history,
-//   department: { loading, departments },
+  //   department: { loading, departments },
   setAlert,
-//   createProgram
+  //   createProgram
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password2 : ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      password2: '',
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      registerFaculty(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().required('Email is required'),
+      password: Yup.string()
+        .required('Password is required')
+        .length(8, 'Password length must be 8 characters'),
+      password2: Yup.string()
+        .required('Password is required')
+        .length(8, 'Password length must be 8 characters'),
+    }),
   });
 
-  const {
-    name,
-    email,
-    password,
-    password2
-  } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  //   password2: '',
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { name, email, password, password2 } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    // if (categoryOfDegree === '' || department === '') {
-    //   setAlert('Please fill all the fields');
-    // } else {
-    //   createProgram(formData, history);
-    // }
-    registerFaculty(formData , history)
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-//   const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   // if (categoryOfDegree === '' || department === '') {
+  //   //   setAlert('Please fill all the fields');
+  //   // } else {
+  //   //   createProgram(formData, history);
+  //   // }
+  //   registerFaculty(formData, history);
+  // };
 
-//   useEffect(() => {
-//     if (!getAllDepartmentsCalled) {
-//       getAllDepartments();
-//       setGetAllDepartmentsCalled(true);
-//     }
-//   }, []);
+  //   const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+
+  //   useEffect(() => {
+  //     if (!getAllDepartmentsCalled) {
+  //       getAllDepartments();
+  //       setGetAllDepartmentsCalled(true);
+  //     }
+  //   }, []);
 
   return (
     <GridContainer>
@@ -110,7 +137,7 @@ const RegisterFaculty = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -119,9 +146,10 @@ const RegisterFaculty = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -131,9 +159,10 @@ const RegisterFaculty = ({
                     variant='outlined'
                     type='email'
                     name='email'
-                    value={email}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.email}
+                    onChange={handleChange}
+                    error={errors.email && touched.email}
+                    helperText={errors.email}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -143,9 +172,10 @@ const RegisterFaculty = ({
                     variant='outlined'
                     type='password'
                     name='password'
-                    value={password}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.password}
+                    onChange={handleChange}
+                    error={errors.password && touched.password}
+                    helperText={errors.password}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -155,9 +185,10 @@ const RegisterFaculty = ({
                     variant='outlined'
                     type='password'
                     name='password2'
-                    value={password2}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.password2}
+                    onChange={handleChange}
+                    error={errors.password2 && touched.password2}
+                    helperText={errors.password2}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -182,17 +213,16 @@ const RegisterFaculty = ({
 RegisterFaculty.propTypes = {
   registerFaculty: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-//   department: PropTypes.object.isRequired,
+  //   department: PropTypes.object.isRequired,
   setAlert: PropTypes.func.isRequired,
-//   createProgram: PropTypes.func.isRequired
+  //   createProgram: PropTypes.func.isRequired
 };
 
-const mapStateToProps = state => ({
-  department: state.department
+const mapStateToProps = (state) => ({
+  department: state.department,
 });
 
 export default connect(mapStateToProps, {
   registerFaculty,
   setAlert,
-  
 })(withRouter(RegisterFaculty));

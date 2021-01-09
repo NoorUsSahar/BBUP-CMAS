@@ -16,38 +16,75 @@ import { connect } from 'react-redux';
 import { register } from '../../../actions/facultysc/auth';
 import { Redirect } from 'react-router-dom';
 import { setAlert } from '../../../actions/facultysc/alert';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const Faculty = ({
   register,
   auth: { loading, isAuthenticated },
   setAlert,
 }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    password2: '',
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      password2: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (values.password !== values.password2) {
+        //console.log('Password donot match');
+        setAlert('Passwords do not match', 'danger');
+      } else {
+        // console.log("SUCCESS");
+        register(values.name, values.email, values.password);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().required('Email is required'),
+      password: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+      password2: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+    }),
   });
 
-  const { name, email, password, password2 } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  //   password2: '',
+  // });
 
+  // const { name, email, password, password2 } = formData;
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (password !== password2) {
-      //console.log('Password donot match');
-      setAlert("Passwords do not match", "danger");
-    } else {
-      // console.log("SUCCESS");
-      register({ name, email, password });
-         }
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (password !== password2) {
+  //     //console.log('Password donot match');
+  //     setAlert("Passwords do not match", "danger");
+  //   } else {
+  //     // console.log("SUCCESS");
+  //     register({ name, email, password });
+  //        }
+  // };
 
-  if (!loading && isAuthenticated ) {
+  if (!loading && isAuthenticated) {
     return <Redirect to='/dashboard' />;
   }
 
@@ -75,16 +112,17 @@ const Faculty = ({
               </div>
             </Grid>
             <Grid xs={12} sm={12} md={12} item>
-              <form className='form' onSubmit={(e) => onSubmit(e)}>
+              <form className='form' onSubmit={handleSubmit}>
                 <TextField
                   className='form-control'
                   label='Name'
                   variant='outlined'
                   type='text'
                   name='name'
-                  value={name}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  value={values.name}
+                  onChange={handleChange}
+                  error={errors.name && touched.name}
+                  helperText={errors.name}
                 />
                 <TextField
                   className='form-control'
@@ -92,9 +130,10 @@ const Faculty = ({
                   variant='outlined'
                   type='email'
                   name='email'
-                  value={email}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  value={values.email}
+                  onChange={handleChange}
+                  error={errors.email && touched.email}
+                  helperText={errors.email}
                 />
                 <TextField
                   className='form-control'
@@ -102,9 +141,10 @@ const Faculty = ({
                   variant='outlined'
                   type='password'
                   name='password'
-                  value={password}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  value={values.password}
+                  onChange={handleChange}
+                  error={errors.password && touched.password}
+                  helperText={errors.password}
                 />
                 <TextField
                   className='form-control'
@@ -112,9 +152,10 @@ const Faculty = ({
                   variant='outlined'
                   type='password'
                   name='password2'
-                  value={password2}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  value={values.password2}
+                  onChange={handleChange}
+                  error={errors.password2 && touched.password2}
+                  helperText={errors.password2}
                 />
                 <Button
                   variant='contained'

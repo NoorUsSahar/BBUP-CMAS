@@ -5,7 +5,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { loadUser } from '../../../actions/adminEtc/auth';
 import {
   getEnrollmentSemesterById,
-  updateEnrollmentSemesterById
+  updateEnrollmentSemesterById,
 } from '../../../actions/adminEtc/enrollment';
 import { getAllPrograms } from '../../../actions/adminEtc/program';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,13 +15,15 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
 import GridContainer from '../../../components/Grid/GridContainer';
 import GridItem from '../../../components/Grid/GridItem';
 import Card from '../../../components/Card/Card';
 import CardHeader from '../../../components/Card/CardHeader';
 import CardBody from '../../../components/Card/CardBody';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -30,11 +32,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -42,11 +44,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -61,9 +63,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -77,7 +79,7 @@ const UpdateEnrollmentSemester = ({
   program: { loading: programLoading, programs },
   auth: { user },
   history,
-  match
+  match,
 }) => {
   const classes = useStyles(styles);
 
@@ -94,7 +96,7 @@ const UpdateEnrollmentSemester = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -106,23 +108,62 @@ const UpdateEnrollmentSemester = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    maximumBatchStrength: '',
-    startDate: '',
-    endDate: '',
-    program: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: !loading && semester !== null ? semester.name : '',
+      description: !loading && semester !== null ? semester.description : '',
+      maximumBatchStrength:
+        !loading && semester !== null ? semester.maximumBatchStrength : '',
+      startDate: !loading && semester !== null ? semester.startDate : '',
+      endDate: !loading && semester !== null ? semester.endDate : '',
+      program: !loading && semester !== null ? semester.program : '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateEnrollmentSemesterById(match.params.id, values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Description is required'),
+      maximumBatchStrength: Yup.number()
+        .typeError('maximumBatchStrength must be a number')
+        .required('maximumBatchStrength is required')
+        .min(1, 'maximumBatchStrength must be atleast 1'),
+      startDate: Yup.date().min(
+        new Date(Date.now() - 86400000),
+        'Start date is required'
+      ),
+      endDate: Yup.date().min(
+        Yup.ref('startDate'),
+        'End date cannot be before start date'
+      ),
+    }),
   });
 
-  const {
-    name,
-    description,
-    maximumBatchStrength,
-    startDate,
-    endDate,
-    program
-  } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  //   maximumBatchStrength: '',
+  //   startDate: '',
+  //   endDate: '',
+  //   program: ''
+  // });
+
+  // const {
+  //   name,
+  //   description,
+  //   maximumBatchStrength,
+  //   startDate,
+  //   endDate,
+  //   program
+  // } = formData;
 
   // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
 
@@ -160,45 +201,50 @@ const UpdateEnrollmentSemester = ({
   //   });
   // }, [user, semesters]);
 
-  const [getAllProgramsCalled, getSetAllProgramsCalled] = useState(false);
+  // const [getAllProgramsCalled, getSetAllProgramsCalled] = useState(false);
 
   useEffect(() => {
-    if (!getAllProgramsCalled) {
-      getAllPrograms();
-      getSetAllProgramsCalled(true);
-    }
+    // if (!getAllProgramsCalled) {
+    getAllPrograms();
+    // getSetAllProgramsCalled(true);
+    // }
   }, []);
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const onSubmit = e => {
-    e.preventDefault();
-    updateEnrollmentSemesterById(match.params.id, formData, history);
-  };
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   updateEnrollmentSemesterById(match.params.id, formData, history);
+  // };
 
-  const [
-    getEnrollmentSemesterByIdCalled,
-    setGetEnrollmentByIdCalled
-  ] = useState(false);
+  // const [
+  //   getEnrollmentSemesterByIdCalled,
+  //   setGetEnrollmentByIdCalled
+  // ] = useState(false);
 
-  useEffect(() => {
-    if (!getEnrollmentSemesterByIdCalled) {
+  useEffect(
+    () => {
+      // if (!getEnrollmentSemesterByIdCalled) {
       getEnrollmentSemesterById(match.params.id);
-      setGetEnrollmentByIdCalled(true);
-    }
+      // setGetEnrollmentByIdCalled(true);
+      // }
 
-    setFormData({
-      name: !loading && semester !== null ? semester.name : '',
-      description: !loading && semester !== null ? semester.description : '',
-      maximumBatchStrength:
-        !loading && semester !== null ? semester.maximumBatchStrength : '',
-      startDate: !loading && semester !== null ? semester.startDate : '',
-      endDate: !loading && semester !== null ? semester.endDate : '',
-      program: !loading && semester !== null ? semester.program : ''
-    });
-  }, [semester]);
+      // setFormData({
+      //   name: !loading && semester !== null ? semester.name : '',
+      //   description: !loading && semester !== null ? semester.description : '',
+      //   maximumBatchStrength:
+      //     !loading && semester !== null ? semester.maximumBatchStrength : '',
+      //   startDate: !loading && semester !== null ? semester.startDate : '',
+      //   endDate: !loading && semester !== null ? semester.endDate : '',
+      //   program: !loading && semester !== null ? semester.program : ''
+      // });
+    },
+    [
+      // semester
+    ]
+  );
 
   return (
     <GridContainer>
@@ -211,7 +257,7 @@ const UpdateEnrollmentSemester = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -220,9 +266,10 @@ const UpdateEnrollmentSemester = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -232,9 +279,10 @@ const UpdateEnrollmentSemester = ({
                     variant='outlined'
                     type='text'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.description}
+                    onChange={handleChange}
+                    error={errors.description && touched.description}
+                    helperText={errors.description}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -244,9 +292,10 @@ const UpdateEnrollmentSemester = ({
                     variant='outlined'
                     type='date'
                     name='startDate'
-                    value={startDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.startDate}
+                    onChange={handleChange}
+                    error={errors.startDate && touched.startDate}
+                    helperText={errors.startDate}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -256,9 +305,10 @@ const UpdateEnrollmentSemester = ({
                     variant='outlined'
                     type='date'
                     name='endDate'
-                    value={endDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.endDate}
+                    onChange={handleChange}
+                    error={errors.endDate && touched.endDate}
+                    helperText={errors.endDate}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -268,9 +318,13 @@ const UpdateEnrollmentSemester = ({
                     variant='outlined'
                     type='text'
                     name='maximumBatchStrength'
-                    value={maximumBatchStrength}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.maximumBatchStrength}
+                    onChange={handleChange}
+                    error={
+                      errors.maximumBatchStrength &&
+                      touched.maximumBatchStrength
+                    }
+                    helperText={errors.maximumBatchStrength}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -280,8 +334,10 @@ const UpdateEnrollmentSemester = ({
                       labelId='program-label'
                       label='Program'
                       name='program'
-                      value={program}
-                      onChange={e => onChange(e)}
+                      value={values.program}
+                      onChange={handleChange}
+                      error={errors.program && touched.program}
+                      helperText={errors.program}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -289,7 +345,7 @@ const UpdateEnrollmentSemester = ({
                       {!programLoading &&
                         // semester !== null &&
                         programs.length > 0 &&
-                        programs.map(program => (
+                        programs.map((program) => (
                           <MenuItem value={`${program._id}`}>
                             {program.name}
                           </MenuItem>
@@ -304,7 +360,7 @@ const UpdateEnrollmentSemester = ({
                     type='submit'
                     size='large'
                   >
-                    Create
+                    Update
                   </Button>
                   &nbsp;
                   <Link
@@ -338,18 +394,18 @@ UpdateEnrollmentSemester.propTypes = {
   auth: PropTypes.object.isRequired,
   enrollment: PropTypes.object.isRequired,
   program: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   enrollment: state.enrollment,
   auth: state.auth,
-  program: state.program
+  program: state.program,
 });
 
 export default connect(mapStateToProps, {
   loadUser,
   getAllPrograms,
   getEnrollmentSemesterById,
-  updateEnrollmentSemesterById
+  updateEnrollmentSemesterById,
 })(withRouter(UpdateEnrollmentSemester));

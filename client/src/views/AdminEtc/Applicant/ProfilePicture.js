@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { uploadProfilePicture, removeProfilePicture } from '../../../actions/adminEtc/auth';
@@ -10,14 +10,7 @@ import CardHeader from '../../../components/Card/CardHeader.js';
 import CardBody from '../../../components/Card/CardBody.js';
 import { makeStyles } from '@material-ui/core';
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  TextField,
   Button,
-  Box,
-  Checkbox
 } from '@material-ui/core';
 import { FormGroup, Input } from 'reactstrap';
 

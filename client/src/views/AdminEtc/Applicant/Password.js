@@ -10,6 +10,8 @@ import CardHeader from '../../../components/Card/CardHeader.js';
 import CardBody from '../../../components/Card/CardBody.js';
 import { makeStyles } from '@material-ui/core';
 import { TextField, Button } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -18,11 +20,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -30,11 +32,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -49,23 +51,23 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
+      lineHeight: '1',
+    },
   },
   root: {
-    minWidth: 275
+    minWidth: 275,
   },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',
-    transform: 'scale(0.8)'
+    transform: 'scale(0.8)',
   },
   title: {
-    fontSize: 14
+    fontSize: 14,
   },
   pos: {
-    marginBottom: 12
-  }
+    marginBottom: 12,
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -73,25 +75,55 @@ const useStyles = makeStyles(styles);
 const Password = ({ updatePassword, setAlert }) => {
   const classes = useStyles(styles);
 
-  const [formData, setFormData] = useState({
-    password: '',
-    cpassword: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      password: '',
+      cpassword: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (values.password !== values.cpassword) {
+        setAlert('Passwords do not match', 'danger');
+      } else {
+        updatePassword(values.password);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      password: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+      cpassword: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+    }),
   });
 
-  const { password, cpassword } = formData;
+  // const [formData, setFormData] = useState({
+  //   password: '',
+  //   cpassword: ''
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { password, cpassword } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    if (password !== cpassword) {
-      setAlert('Passwords do not match', 'danger');
-    } else {
-      updatePassword(password);
-    }
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   if (password !== cpassword) {
+  //     setAlert('Passwords do not match', 'danger');
+  //   } else {
+  //     updatePassword(password);
+  //   }
+  // };
 
   return (
     <GridContainer>
@@ -102,7 +134,7 @@ const Password = ({ updatePassword, setAlert }) => {
             <p className={classes.cardCategoryWhite}>Update your password</p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -111,9 +143,10 @@ const Password = ({ updatePassword, setAlert }) => {
                     variant='outlined'
                     type='password'
                     name='password'
-                    value={password}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.password}
+                    onChange={handleChange}
+                    error={errors.password && touched.password}
+                    helperText={errors.password}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -123,14 +156,15 @@ const Password = ({ updatePassword, setAlert }) => {
                     variant='outlined'
                     type='password'
                     name='cpassword'
-                    value={cpassword}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.cpassword}
+                    onChange={handleChange}
+                    error={errors.cpassword && touched.cpassword}
+                    helperText={errors.cpassword}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <Button color='secondary' variant='contained' type='submit'>
-                    Update Password
+                    Update
                   </Button>
                 </GridItem>
               </GridContainer>
@@ -144,7 +178,7 @@ const Password = ({ updatePassword, setAlert }) => {
 
 Password.propTypes = {
   updatePassword: PropTypes.func.isRequired,
-  setAlert: PropTypes.func.isRequired
+  setAlert: PropTypes.func.isRequired,
 };
 
 export default connect(null, { updatePassword, setAlert })(Password);

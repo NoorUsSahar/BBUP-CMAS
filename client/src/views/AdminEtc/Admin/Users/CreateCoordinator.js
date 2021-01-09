@@ -17,8 +17,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -27,11 +29,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -46,9 +48,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -59,57 +61,107 @@ const CreateCoordinator = ({
   getAllDepartments,
   auth: { loading, isAuthenticated, user },
   setAlert,
-  registerCoordinator
+  registerCoordinator,
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    cpassword: '',
-    department: '',
-    description: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      email: '',
+      password: '',
+      cpassword: '',
+      department: '',
+      description: '',
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      if (
+        values.name === '' ||
+        values.email === '' ||
+        values.password === '' ||
+        values.cpassword === '' ||
+        values.department === '' ||
+        values.description === ''
+      ) {
+        setAlert('Please fill in all the feilds in order to proceed.');
+      } else {
+        registerCoordinator(values, history);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().required('Email is required'),
+      password: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+      cpassword: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+      department: Yup.string().required('Department is required'),
+      description: Yup.string().required('Description is required'),
+    }),
   });
 
-  const {
-    name,
-    email,
-    password,
-    cpassword,
-    department,
-    description
-  } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  //   cpassword: '',
+  //   department: '',
+  //   description: '',
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const {
+  //   name,
+  //   email,
+  //   password,
+  //   cpassword,
+  //   department,
+  //   description,
+  // } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    if (
-      name === '' ||
-      email === '' ||
-      password === '' ||
-      cpassword === '' ||
-      department === '' ||
-      description === ''
-    ) {
-      setAlert('Please fill in all the feilds in order to proceed.');
-    } else {
-      registerCoordinator(formData, history);
-    }
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (
+  //     name === '' ||
+  //     email === '' ||
+  //     password === '' ||
+  //     cpassword === '' ||
+  //     department === '' ||
+  //     description === ''
+  //   ) {
+  //     setAlert('Please fill in all the feilds in order to proceed.');
+  //   } else {
+  //     registerCoordinator(formData, history);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (!getAllDepartmentsCalled) {
+  // const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+
+  useEffect(
+    () => {
+      // if (!getAllDepartmentsCalled) {
       getAllDepartments();
-      setGetAllDepartmentsCalled(true);
-    }
-    getAllDepartments();
-  }, [getAllDepartments]);
+      // setGetAllDepartmentsCalled(true);
+      // }
+      getAllDepartments();
+    },
+    [
+      // getAllDepartments
+    ]
+  );
 
   if (!loading && isAuthenticated && user !== null && user.type === 1) {
     return <Redirect to='/manage-coordinator' />;
@@ -126,7 +178,7 @@ const CreateCoordinator = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -135,9 +187,10 @@ const CreateCoordinator = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -147,9 +200,10 @@ const CreateCoordinator = ({
                     variant='outlined'
                     type='text'
                     name='email'
-                    value={email}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.email}
+                    onChange={handleChange}
+                    error={errors.email && touched.email}
+                    helperText={errors.email}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -159,9 +213,10 @@ const CreateCoordinator = ({
                     variant='outlined'
                     type='password'
                     name='password'
-                    value={password}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.password}
+                    onChange={handleChange}
+                    error={errors.password && touched.password}
+                    helperText={errors.password}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -171,9 +226,10 @@ const CreateCoordinator = ({
                     variant='outlined'
                     type='password'
                     name='cpassword'
-                    value={cpassword}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.cpassword}
+                    onChange={handleChange}
+                    error={errors.cpassword && touched.cpassword}
+                    helperText={errors.cpassword}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -183,9 +239,10 @@ const CreateCoordinator = ({
                     variant='outlined'
                     type='text'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.description}
+                    onChange={handleChange}
+                    error={errors.description && touched.description}
+                    helperText={errors.description}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -195,15 +252,17 @@ const CreateCoordinator = ({
                       labelId='department-label'
                       label='Department'
                       name='department'
-                      value={department}
-                      onChange={e => onChange(e)}
+                      value={values.department}
+                      onChange={handleChange}
+                      error={errors.department && touched.department}
+                      helperText={errors.department}
                     >
                       <MenuItem value=''>
                         <em>None</em>
                       </MenuItem>
                       {!deptReducer.loading &&
                         deptReducer.departments.length > 0 &&
-                        deptReducer.departments.map(department => (
+                        deptReducer.departments.map((department) => (
                           <MenuItem value={`${department._id}`}>
                             {department.name}
                           </MenuItem>
@@ -249,16 +308,16 @@ CreateCoordinator.propTypes = {
   registerCoordinator: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   setAlert: PropTypes.func.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   department: state.department,
-  auth: state.auth
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
   getAllDepartments,
   registerCoordinator,
-  setAlert
+  setAlert,
 })(withRouter(CreateCoordinator));

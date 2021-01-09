@@ -8,9 +8,14 @@ import CardHeader from '../../../../components/Card/CardHeader.js';
 import CardBody from '../../../../components/Card/CardBody.js';
 import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { updateDepartment, getDepartmentById } from '../../../../actions/adminEtc/department';
+import {
+  updateDepartment,
+  getDepartmentById,
+} from '../../../../actions/adminEtc/department';
 import { withRouter } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -54,36 +59,64 @@ const ManageDepartments = ({
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-  });
-
-  const { name, description } = formData;
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    updateDepartment(match.params.id, formData, history);
-  };
-
-  const [getDepartmentByIdCalled, setGetDepartmentByIdCalled] = useState(false);
-
-  useEffect(() => {
-    if (!getDepartmentByIdCalled) {
-      getDepartmentById(match.params.id);
-      setGetDepartmentByIdCalled(true);
-    }
-
-    setFormData({
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
       name: !loading && department !== null ? department.name : '',
       description:
         !loading && department !== null ? department.description : '',
-    });
-  }, [department]);
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateDepartment(match.params.id, values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Description is required'),
+    }),
+  });
+
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  // });
+
+  // const { name, description } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   updateDepartment(match.params.id, formData, history);
+  // };
+
+  // const [getDepartmentByIdCalled, setGetDepartmentByIdCalled] = useState(false);
+
+  useEffect(
+    () => {
+      // if (!getDepartmentByIdCalled) {
+      getDepartmentById(match.params.id);
+      // setGetDepartmentByIdCalled(true);
+      // }
+
+      // setFormData({
+      //   name: !loading && department !== null ? department.name : '',
+      //   description:
+      //     !loading && department !== null ? department.description : '',
+      // });
+    },
+    [
+      // department
+    ]
+  );
 
   return (
     <GridContainer>
@@ -96,16 +129,17 @@ const ManageDepartments = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={(e) => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <TextField
                 className='form-control'
                 label='Name'
                 variant='outlined'
                 type='text'
                 name='name'
-                value={name}
-                onChange={(e) => onChange(e)}
-                required={true}
+                value={values.name}
+                onChange={handleChange}
+                error={errors.name && touched.name}
+                helperText={errors.name}
               />
               <TextField
                 className='form-control'
@@ -115,9 +149,10 @@ const ManageDepartments = ({
                 rows={5}
                 multiline
                 name='description'
-                value={description}
-                onChange={(e) => onChange(e)}
-                required={true}
+                value={values.description}
+                onChange={handleChange}
+                error={errors.description && touched.description}
+                helperText={errors.description}
               />
               <Button
                 color='primary'

@@ -15,6 +15,8 @@ import {
 import { withRouter } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
 import StatusStepper from './StatusStepper';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -57,33 +59,8 @@ const IncomeDetails = ({
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    monthlyIncome: '',
-    minimumYearlyIncome: '',
-  });
-
-  const { monthlyIncome, minimumYearlyIncome } = formData;
-
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    updateIncomeDetails(formData, history);
-  };
-
-  const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
-    false
-  );
-
-  useEffect(() => {
-    if (!getCurrentApplicantCalled) {
-      getCurrentApplicant();
-      setGetCurrentApplicantCalled(true);
-    }
-
-    setFormData({
+  const { values, handleChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: {
       monthlyIncome:
         !loading && applicant !== null && applicant.incomeDetails
           ? applicant.incomeDetails.monthlyIncome
@@ -92,8 +69,65 @@ const IncomeDetails = ({
         !loading && applicant !== null && applicant.incomeDetails
           ? applicant.incomeDetails.minimumYearlyIncome
           : '',
-    });
-  }, [applicant]);
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateIncomeDetails(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      monthlyIncome: Yup.number()
+        .typeError('Monthly Income must be a number')
+        .required('Monthly Income is required')
+        .min(1, 'Monthly Income must be atleast 1'),
+      minimumYearlyIncome: Yup.number()
+        .typeError('Minimum Yearly Income must be a number')
+        .required('Minimum Yearly Income is required')
+        .min(1, 'Minimum Yearly Income must be atleast 1'),
+    }),
+  });
+
+  // const [formData, setFormData] = useState({
+  //   monthlyIncome: '',
+  //   minimumYearlyIncome: '',
+  // });
+
+  // const { monthlyIncome, minimumYearlyIncome } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   updateIncomeDetails(formData, history);
+  // };
+
+  // const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
+  //   false
+  // );
+
+  useEffect(
+    () => {
+      // if (!getCurrentApplicantCalled) {
+      getCurrentApplicant();
+      // setGetCurrentApplicantCalled(true);
+      // }
+
+      // setFormData({
+      // monthlyIncome:
+      //   !loading && applicant !== null && applicant.incomeDetails
+      //     ? applicant.incomeDetails.monthlyIncome
+      //     : '',
+      // minimumYearlyIncome:
+      //   !loading && applicant !== null && applicant.incomeDetails
+      //     ? applicant.incomeDetails.minimumYearlyIncome
+      //     : '',
+      // });
+    },
+    [
+      // applicant
+    ]
+  );
 
   return (
     <GridContainer>
@@ -109,7 +143,7 @@ const IncomeDetails = ({
             <StatusStepper
               status={!loading && applicant !== null ? applicant.status : 0}
             />
-            <form onSubmit={(e) => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -118,9 +152,10 @@ const IncomeDetails = ({
                     variant='outlined'
                     type='number'
                     name='monthlyIncome'
-                    value={monthlyIncome}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.monthlyIncome}
+                    onChange={handleChange}
+                    error={errors.monthlyIncome && touched.monthlyIncome}
+                    helperText={errors.monthlyIncome}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -130,9 +165,12 @@ const IncomeDetails = ({
                     variant='outlined'
                     type='number'
                     name='minimumYearlyIncome'
-                    value={minimumYearlyIncome}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.minimumYearlyIncome}
+                    onChange={handleChange}
+                    error={
+                      errors.minimumYearlyIncome && touched.minimumYearlyIncome
+                    }
+                    helperText={errors.minimumYearlyIncome}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>

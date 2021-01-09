@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
@@ -12,6 +12,8 @@ import CardHeader from '../../../../components/Card/CardHeader';
 import CardBody from '../../../../components/Card/CardBody';
 import StatusStepper from './StatusStepper';
 import { TextField, Button, Checkbox } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardTitleWhite: {
@@ -20,11 +22,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryWhite: {
     color: '#FFFFFF',
@@ -39,9 +41,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -50,7 +52,7 @@ const EducationDetails = ({
   loadUser,
   updateAdminEducationDetails,
   profile: { loading, profile },
-  history
+  history,
 }) => {
   const classes = useStyles();
 
@@ -67,7 +69,7 @@ const EducationDetails = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -79,46 +81,15 @@ const EducationDetails = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    college: '',
-    university: '',
-    degree: '',
-    fieldOfStudy: '',
-    from: '',
-    to: '',
-    current: '',
-    description: ''
-  });
-
   const {
-    college,
-    university,
-    degree,
-    fieldOfStudy,
-    from,
-    to,
-    current,
-    description
-  } = formData;
-
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = e => {
-    e.preventDefault();
-    updateAdminEducationDetails(formData, history);
-  };
-
-  useEffect(() => {
-    if (!getCurrentUserCalled) {
-      loadUser();
-      setGetCurrentUserCalled(true);
-    }
-
-    setFormData({
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
       college:
         !loading && profile !== null && profile.educationDetails
           ? profile.educationDetails.college
@@ -146,13 +117,102 @@ const EducationDetails = ({
       current:
         !loading && profile !== null && profile.educationDetails
           ? profile.educationDetails.current
-          : '',
+          : false,
       description:
         !loading && profile !== null && profile.educationDetails
           ? profile.educationDetails.description
-          : ''
-    });
-  }, [profile]);
+          : '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      updateAdminEducationDetails(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      college: Yup.string().required('College is required'),
+      university: Yup.string().required('University is required'),
+      degree: Yup.string().required('Degree is required'),
+      fieldOfStudy: Yup.string().required('Field of Study is required'),
+      from: Yup.date(),
+      to: Yup.date().min(Yup.ref('from'), 'To date cannot be before from date'),
+      // current: Yup.boolean(),
+      description: Yup.string().required('Description is required'),
+    }),
+  });
+
+  // const [formData, setFormData] = useState({
+  //   college: ,
+  //   university: '',
+  //   degree: '',
+  //   fieldOfStudy: '',
+  //   from: '',
+  //   to: '',
+  //   current: '',
+  //   description: '',
+  // });
+
+  // const {
+  //   college,
+  //   university,
+  //   degree,
+  //   fieldOfStudy,
+  //   from,
+  //   to,
+  //   current,
+  //   description,
+  // } = formData;
+
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   updateAdminEducationDetails(formData, history);
+  // };
+
+  useEffect(() => {
+    // if (!getCurrentUserCalled) {
+    loadUser();
+    // setGetCurrentUserCalled(true);
+    // }
+
+    // setFormData({
+    //   college:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.college
+    //       : '',
+    //   university:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.university
+    //       : '',
+    //   degree:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.degree
+    //       : '',
+    //   fieldOfStudy:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.fieldOfStudy
+    //       : '',
+    //   from:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? getFormattedDate(profile.educationDetails.from)
+    //       : getCurrentDate(),
+    //   to:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? getFormattedDate(profile.educationDetails.to)
+    //       : getCurrentDate(),
+    //   current:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.current
+    //       : '',
+    //   description:
+    //     !loading && profile !== null && profile.educationDetails
+    //       ? profile.educationDetails.description
+    //       : '',
+    // });
+  }, []);
 
   if (!loading && profile !== null && profile.status < 2) {
     return <Redirect to='/admin/education-details' />;
@@ -172,7 +232,7 @@ const EducationDetails = ({
             <StatusStepper
               status={!loading && profile !== null ? profile.status : 0}
             />
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -181,9 +241,10 @@ const EducationDetails = ({
                     variant='outlined'
                     name='college'
                     type='text'
-                    value={college}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.college}
+                    onChange={handleChange}
+                    error={errors.college && touched.college}
+                    helperText={errors.college}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -193,9 +254,10 @@ const EducationDetails = ({
                     variant='outlined'
                     name='university'
                     type='text'
-                    value={university}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.university}
+                    onChange={handleChange}
+                    error={errors.university && touched.university}
+                    helperText={errors.university}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -205,9 +267,10 @@ const EducationDetails = ({
                     variant='outlined'
                     name='degree'
                     type='text'
-                    value={degree}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.degree}
+                    onChange={handleChange}
+                    error={errors.degree && touched.degree}
+                    helperText={errors.degree}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -217,9 +280,10 @@ const EducationDetails = ({
                     variant='outlined'
                     name='fieldOfStudy'
                     type='text'
-                    value={fieldOfStudy}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.fieldOfStudy}
+                    onChange={handleChange}
+                    error={errors.fieldOfStudy && touched.fieldOfStudy}
+                    helperText={errors.fieldOfStudy}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -229,9 +293,10 @@ const EducationDetails = ({
                     variant='outlined'
                     name='from'
                     type='date'
-                    value={from}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.from}
+                    onChange={handleChange}
+                    error={errors.from && touched.from}
+                    helperText={errors.from}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -241,17 +306,19 @@ const EducationDetails = ({
                     variant='outlined'
                     name='to'
                     type='date'
-                    value={to}
-                    onChange={e => onChange(e)}
-                    disabled={current}
+                    value={values.to}
+                    onChange={handleChange}
+                    disabled={values.current}
+                    error={errors.to && touched.to}
+                    helperText={errors.to}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <Checkbox
                     className='form-control'
-                    checked={current}
-                    onChange={e => {
-                      setFormData({ ...formData, current: !current });
+                    checked={values.current}
+                    onChange={() => {
+                      setFieldValue('current', !values.current);
                     }}
                   />
                 </GridItem>
@@ -265,9 +332,10 @@ const EducationDetails = ({
                     type='text'
                     variant='outlined'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.description}
+                    onChange={handleChange}
+                    error={errors.description && touched.description}
+                    helperText={errors.description}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -294,14 +362,14 @@ EducationDetails.propTypes = {
   updateAdminEducationDetails: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  profile: state.profile
+const mapStateToProps = (state) => ({
+  profile: state.profile,
 });
 
 export default connect(mapStateToProps, {
   loadUser,
-  updateAdminEducationDetails
+  updateAdminEducationDetails,
 })(withRouter(EducationDetails));

@@ -12,13 +12,15 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
 import GridItem from '../../../components/Grid/GridItem.js';
 import GridContainer from '../../../components/Grid/GridContainer.js';
 import Card from '../../../components/Card/Card.js';
 import CardHeader from '../../../components/Card/CardHeader.js';
 import CardBody from '../../../components/Card/CardBody.js';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -27,11 +29,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -46,9 +48,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -58,40 +60,70 @@ const CreateSection = ({
   getAllEnrollmentSemesters,
   history,
   enrollment: { loading, semesters },
-  setAlert
+  setAlert,
 }) => {
   const classes = useStyles(styles);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    maximumStrength: '',
-    currentNumberOfStudents: '',
-    semester: ''
+  const { values, errors, touched, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      name: '',
+      maximumStrength: '',
+      currentNumberOfStudents: '',
+      semester: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (values.semester === '') {
+        setAlert('Please fill in all the fields in order to proceed');
+      } else {
+        // console.log(formData);
+        createSection(values, history);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      maximumStrength: Yup.number()
+        .typeError('Maximum strength must be a number')
+        .required('Maximum strength is required')
+        .min(1, 'Maximum strength must be atleast 1'),
+      currentNumberOfStudents: Yup.number()
+        .typeError('Current number of students must be a number')
+        .required('Current number of students is required')
+        .min(0, 'Current number of students must be atleast 0'),
+      semester: Yup.string().required('Semester must be selected'),
+    }),
   });
 
-  const { name, maximumStrength, currentNumberOfStudents, semester } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   maximumStrength: '',
+  //   currentNumberOfStudents: '',
+  //   semester: ''
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { name, maximumStrength, currentNumberOfStudents, semester } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    if (semester === '') {
-      setAlert('Please fill in all the fields in order to proceed');
-    } else {
-      console.log(formData);
-      createSection(formData, history);
-    }
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const [getAllSemestersCalled, setGetAllSemestersCalled] = useState(false);
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   if (semester === '') {
+  //     setAlert('Please fill in all the fields in order to proceed');
+  //   } else {
+  //     console.log(formData);
+  //     createSection(formData, history);
+  //   }
+  // };
+
+  // const [getAllSemestersCalled, setGetAllSemestersCalled] = useState(false);
 
   useEffect(() => {
-    if (!getAllSemestersCalled) {
-      getAllEnrollmentSemesters();
-      setGetAllSemestersCalled(true);
-    }
+    // if (!getAllSemestersCalled) {
+    getAllEnrollmentSemesters();
+    // setGetAllSemestersCalled(true);
+    // }
   }, []);
 
   return (
@@ -105,7 +137,7 @@ const CreateSection = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -114,9 +146,10 @@ const CreateSection = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -126,8 +159,10 @@ const CreateSection = ({
                       labelId='semester-label'
                       label='Semester'
                       name='semester'
-                      value={semester}
-                      onChange={e => onChange(e)}
+                      value={values.semester}
+                      onChange={handleChange}
+                      error={errors.semester && touched.semester}
+                      helperText={errors.semester}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -135,7 +170,7 @@ const CreateSection = ({
                       {!loading &&
                         // semester !== null &&
                         semesters.length > 0 &&
-                        semesters.map(semester => (
+                        semesters.map((semester) => (
                           <MenuItem value={`${semester._id}`}>
                             {semester.name}
                           </MenuItem>
@@ -150,9 +185,10 @@ const CreateSection = ({
                     variant='outlined'
                     type='text'
                     name='maximumStrength'
-                    value={maximumStrength}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.maximumStrength}
+                    onChange={handleChange}
+                    error={errors.maximumStrength && touched.maximumStrength}
+                    helperText={errors.maximumStrength}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -162,9 +198,13 @@ const CreateSection = ({
                     variant='outlined'
                     type='text'
                     name='currentNumberOfStudents'
-                    value={currentNumberOfStudents}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.currentNumberOfStudents}
+                    onChange={handleChange}
+                    error={
+                      errors.currentNumberOfStudents &&
+                      touched.currentNumberOfStudents
+                    }
+                    helperText={errors.currentNumberOfStudents}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -206,16 +246,16 @@ CreateSection.propTypes = {
   setAlert: PropTypes.func.isRequired,
   section: PropTypes.object.isRequired,
   enrollment: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   enrollment: state.enrollment,
-  section: state.section
+  section: state.section,
 });
 
 export default connect(mapStateToProps, {
   createSection,
   setAlert,
-  getAllEnrollmentSemesters
+  getAllEnrollmentSemesters,
 })(withRouter(CreateSection));

@@ -18,8 +18,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -28,11 +30,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -47,9 +49,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -62,43 +64,19 @@ const RegisterUndergraduateStudent = ({
   applicant,
   setAlert,
   registerStudent,
-  match
+  match,
 }) => {
   const classes = useStyles(styles);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    cpassword: ''
-  });
-
-  const { name, email, password, cpassword } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = e => {
-    e.preventDefault();
-    if (name === '' || email === '' || password === '' || cpassword === '') {
-      setAlert('Please fill in all the feilds in order to proceed.');
-    } else {
-      registerStudent(formData, history);
-    }
-  };
-
-  const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
-    false
-  );
-
-  useEffect(() => {
-    if (!getCurrentApplicantCalled) {
-      getApplicantById(match.params.id);
-      setGetCurrentApplicantCalled(true);
-    }
-
-    setFormData({
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
       name:
         !applicant.loading &&
         applicant.applicant !== null &&
@@ -110,20 +88,98 @@ const RegisterUndergraduateStudent = ({
         applicant.applicant !== null &&
         applicant.applicant.personalDetails
           ? applicant.applicant.personalDetails.email
-          : ''
-    });
-  }, [applicant]);
+          : '',
+      password: '',
+      cpassword: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (
+        values.name === '' ||
+        values.email === '' ||
+        values.password === '' ||
+        values.cpassword === ''
+      ) {
+        setAlert('Please fill in all the feilds in order to proceed.');
+      } else {
+        registerStudent(values, history);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      email: Yup.string().required('Email is required'),
+      password: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+      cpassword: Yup.string()
+        .required('Password is required')
+        .length(6, 'Password length must be 6 characters'),
+    }),
+  });
 
-  const [
-    getAllUndergraduateCoursesCalled,
-    setGetAllUndergraduateCoursesCalled
-  ] = useState(false);
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   email: '',
+  //   password: '',
+  //   cpassword: '',
+  // });
+
+  // const { name, email, password, cpassword } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (name === '' || email === '' || password === '' || cpassword === '') {
+  //     setAlert('Please fill in all the feilds in order to proceed.');
+  //   } else {
+  //     registerStudent(formData, history);
+  //   }
+  // };
+
+  // const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
+  //   false
+  // );
+
+  useEffect(
+    () => {
+      // if (!getCurrentApplicantCalled) {
+      getApplicantById(match.params.id);
+      // setGetCurrentApplicantCalled(true);
+      // }
+
+      // setFormData({
+      //   name:
+      //     !applicant.loading &&
+      //     applicant.applicant !== null &&
+      //     applicant.applicant.personalDetails
+      //       ? applicant.applicant.personalDetails.name
+      //       : '',
+      //   email:
+      //     !applicant.loading &&
+      //     applicant.applicant !== null &&
+      //     applicant.applicant.personalDetails
+      //       ? applicant.applicant.personalDetails.email
+      //       : '',
+      // });
+    },
+    [
+      // applicant
+    ]
+  );
+
+  // const [
+  //   getAllUndergraduateCoursesCalled,
+  //   setGetAllUndergraduateCoursesCalled,
+  // ] = useState(false);
 
   useEffect(() => {
-    if (!getAllUndergraduateCoursesCalled) {
-      getAllUndergraduateCourses();
-      setGetAllUndergraduateCoursesCalled(true);
-    }
+    // if (!getAllUndergraduateCoursesCalled) {
+    getAllUndergraduateCourses();
+    // setGetAllUndergraduateCoursesCalled(true);
+    // }
   }, []);
 
   if (!loading && isAuthenticated && user !== null && user.type === 4) {
@@ -142,7 +198,7 @@ const RegisterUndergraduateStudent = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -151,9 +207,10 @@ const RegisterUndergraduateStudent = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -163,9 +220,10 @@ const RegisterUndergraduateStudent = ({
                     variant='outlined'
                     type='text'
                     name='email'
-                    value={email}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.email}
+                    onChange={handleChange}
+                    error={errors.email && touched.email}
+                    helperText={errors.email}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -175,9 +233,10 @@ const RegisterUndergraduateStudent = ({
                     variant='outlined'
                     type='password'
                     name='password'
-                    value={password}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.password}
+                    onChange={handleChange}
+                    error={errors.password && touched.password}
+                    helperText={errors.password}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -187,9 +246,10 @@ const RegisterUndergraduateStudent = ({
                     variant='outlined'
                     type='password'
                     name='cpassword'
-                    value={cpassword}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.cpassword}
+                    onChange={handleChange}
+                    error={errors.cpassword && touched.cpassword}
+                    helperText={errors.cpassword}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}></GridItem>
@@ -257,17 +317,17 @@ RegisterUndergraduateStudent.propTypes = {
   applicant: PropTypes.object.isRequired,
   setAlert: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  auth: PropTypes.object.isRequired
+  auth: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
-  applicant: state.applicant
+  applicant: state.applicant,
 });
 
 export default connect(mapStateToProps, {
   registerStudent,
   getApplicantById,
   getAllUndergraduateCourses,
-  setAlert
+  setAlert,
 })(withRouter(RegisterUndergraduateStudent));

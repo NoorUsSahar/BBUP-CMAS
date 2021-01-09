@@ -9,6 +9,8 @@ import Card from '../../../../components/Card/Card';
 import CardHeader from '../../../../components/Card/CardHeader.js';
 import CardBody from '../../../../components/Card/CardBody.js';
 import { TextField, Button } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -17,11 +19,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -29,11 +31,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -48,23 +50,23 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
+      lineHeight: '1',
+    },
   },
   root: {
-    minWidth: 275
+    minWidth: 275,
   },
   bullet: {
     display: 'inline-block',
     margin: '0 2px',
-    transform: 'scale(0.8)'
+    transform: 'scale(0.8)',
   },
   title: {
-    fontSize: 14
+    fontSize: 14,
   },
   pos: {
-    marginBottom: 12
-  }
+    marginBottom: 12,
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -72,18 +74,39 @@ const useStyles = makeStyles(styles);
 const Name = ({ changeName }) => {
   const classes = useStyles(styles);
 
-  const [formData, setFormData] = useState(false);
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      changeName(values);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+    }),
+  });
 
-  const { name } = formData;
+  // const [formData, setFormData] = useState(false);
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { name } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    changeName(formData);
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   changeName(formData);
+  // };
+
   return (
     <GridContainer>
       <GridItem xs={12} sm={12} md={12}>
@@ -93,7 +116,7 @@ const Name = ({ changeName }) => {
             <p className={classes.cardCategoryWhite}>Update your name</p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -102,14 +125,15 @@ const Name = ({ changeName }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
                   <Button color='secondary' variant='contained' type='submit'>
-                    Update Name
+                    Update
                   </Button>
                 </GridItem>
               </GridContainer>
@@ -123,8 +147,8 @@ const Name = ({ changeName }) => {
 
 Name.propTypes = {};
 
-const mapStateToProps = state => ({
-  changeName: PropTypes.func.isRequired
+const mapStateToProps = (state) => ({
+  changeName: PropTypes.func.isRequired,
 });
 
 export default connect(mapStateToProps, { changeName })(Name);

@@ -9,6 +9,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getSurveyById, setSurveyDates } from "../../../../actions/adminEtc/survey";
 import { Container, Grid, Paper, TextField } from "@material-ui/core";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const StyledButton = withStyles({
   root: {
@@ -31,23 +33,50 @@ const PublishDate = ({ survey, getSurveyById, survey_id, setSurveyDates }) => {
     getSurveyById(survey_id);
   }, [getSurveyById, setSurveyDates]);
 
-  const [formData, setFormData] = useState({
-    publish_date: "",
-    end_date: "",
-    id: "",
+  const { values, errors, touched, handleChange, handleSubmit, setFieldValue } = useFormik({
+    initialValues: {
+      
+      publish_date:'',
+    end_date: '',
+    id: survey_id,
+    },
+
+    onSubmit: (values) => {
+      setSurveyDates(values);
+      console.log("Date set")
+    },
+    validationSchema: Yup.object().shape({
+      
+      publish_date: Yup.date().min(
+        new Date(Date.now() - 86400000),
+        'Publish date is required'
+      ),
+      end_date: Yup.date().min(
+        Yup.ref('publish_date'),
+        'End date cannot be before publish date'
+      ),
+      // id: Yup.string().required('Id is required'),
+    }),
   });
 
-  const { publish_date, end_date, id } = formData;
+  // const [formData, setFormData] = useState({
+  //   publish_date: "",
+  //   end_date: "",
+  //   id: "",
+  // });
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-  const onSubmit = (e) => {
-    e.preventDefault();
-    setFormData({ ...formData, id: survey_id });
-    setSurveyDates(formData);
-    //   createEvent(formData, history);
-  };
+  // const { publish_date, end_date, id } = formData;
+
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   setFormData({ ...formData, id: survey_id });
+  //   setSurveyDates(formData);
+  //   //   createEvent(formData, history);
+  // };
 
   return (
     <Popup
@@ -72,16 +101,18 @@ const PublishDate = ({ survey, getSurveyById, survey_id, setSurveyDates }) => {
               <h3>Dates</h3>
             </Grid>
             <Grid xs={12} sm={12} md={12} item>
-              <form className="form" onSubmit={(e) => onSubmit(e)}>
+              <form className="form" onSubmit={handleSubmit}>
                 Publish Date
                 <TextField
                   className="form-control"
                   variant="outlined"
                   type="datetime-local"
                   name="publish_date"
-                  value={publish_date}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  
+                  onChange={handleChange}
+                  error={errors.publish_date && touched.publish_date}
+                    helperText={errors.publish_date}
+                    value={values.name}
                 />
                 End Date
                 <TextField
@@ -89,9 +120,10 @@ const PublishDate = ({ survey, getSurveyById, survey_id, setSurveyDates }) => {
                   variant="outlined"
                   type="datetime-local"
                   name="end_date"
-                  value={end_date}
-                  onChange={(e) => onChange(e)}
-                  required={true}
+                  value={values.name}
+                  onChange={handleChange}
+                  error={errors.end_date && touched.end_date}
+                    helperText={errors.end_date}
                 />
                 <Button
                   variant="contained"

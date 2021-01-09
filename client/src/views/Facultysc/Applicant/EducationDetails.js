@@ -12,6 +12,8 @@ import { createDepartment } from '../../actions/department';
 import { withRouter } from 'react-router-dom';
 import { TextField } from '@material-ui/core';
 import StatusStepper from './StatusStepper';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -49,21 +51,43 @@ const useStyles = makeStyles(styles);
 const EducationDetails = ({ createDepartment, history }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      createDepartment(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Description is required'),
+    }),
   });
 
-  const { name, description } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  // });
 
-  const onChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const { name, description } = formData;
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    createDepartment(formData, history);
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   createDepartment(formData, history);
+  // };
 
   return (
     <GridContainer>
@@ -77,7 +101,7 @@ const EducationDetails = ({ createDepartment, history }) => {
           </CardHeader>
           <CardBody>
             <StatusStepper status={0} />
-            <form onSubmit={(e) => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <div className='heading-primary'>Secondary Education</div>
@@ -89,9 +113,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -101,9 +126,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -113,9 +139,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -125,9 +152,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -137,9 +165,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -149,9 +178,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -161,9 +191,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -173,9 +204,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -188,9 +220,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -200,9 +233,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -212,9 +246,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -224,9 +259,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -236,9 +272,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -248,9 +285,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -260,9 +298,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -272,9 +311,10 @@ const EducationDetails = ({ createDepartment, history }) => {
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={(e) => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>

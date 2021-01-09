@@ -11,19 +11,21 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import {
   getCurrentApplicant,
   updateEducationDetails,
-  applicantForwarded
+  applicantForwarded,
 } from '../../../actions/adminEtc/applicant';
 import { setAlert } from '../../../actions/adminEtc/alert';
 import { TextField } from '@material-ui/core';
 import UndergraduateStatusStepper from './UndergraduateStatusStepper';
 import FormImage from './FormImage';
 import { Redirect } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -32,11 +34,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -51,9 +53,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -63,86 +65,19 @@ const EducationDetails = ({
   applicantForwarded,
   applicant: { loading, applicant },
   updateEducationDetails,
-  setAlert
+  setAlert,
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    secondaryEducationType: '',
-    secondaryEducationInstitute: '',
-    secondaryEducationFieldOfStudy: '',
-    secondaryEducationFrom: '',
-    secondaryEducationTo: '',
-    secondaryEducationObtainedMarks: '',
-    secondaryEducationTotalMarks: '',
-    secondaryEducationPicture: '',
-    intermediateEducationType: '',
-    intermediateEducationInstitute: '',
-    intermediateEducationFieldOfStudy: '',
-    intermediateEducationFrom: '',
-    intermediateEducationTo: '',
-    intermediateEducationObtainedMarks: '',
-    intermediateEducationTotalMarks: '',
-    intermediateEducationPicture: ''
-  });
-
   const {
-    secondaryEducationType,
-    secondaryEducationInstitute,
-    secondaryEducationFieldOfStudy,
-    secondaryEducationFrom,
-    secondaryEducationTo,
-    secondaryEducationObtainedMarks,
-    secondaryEducationTotalMarks,
-    secondaryEducationPicture,
-    intermediateEducationType,
-    intermediateEducationInstitute,
-    intermediateEducationFieldOfStudy,
-    intermediateEducationFrom,
-    intermediateEducationTo,
-    intermediateEducationObtainedMarks,
-    intermediateEducationTotalMarks,
-    intermediateEducationPicture
-  } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onChangeImage = e => {
-    const name = e.target.name;
-    const reader = new FileReader();
-    reader.onload = e => {
-      setFormData({ ...formData, [name]: e.target.result });
-    };
-    reader.readAsDataURL(e.target.files[0]);
-  };
-
-  const onSubmit = e => {
-    e.preventDefault();
-    if (secondaryEducationType === '' || intermediateEducationType === '') {
-      setAlert('All fields are required');
-    } else {
-      updateEducationDetails(formData).then(result => {
-        // Forward application here
-        if (result) {
-          applicantForwarded();
-        }
-      });
-    }
-  };
-
-  const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
-    false
-  );
-
-  useEffect(() => {
-    if (!getCurrentApplicantCalled) {
-      getCurrentApplicant();
-      setGetCurrentApplicantCalled(true);
-    }
-
-    setFormData({
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
       secondaryEducationType:
         !loading && applicant !== null && applicant.educationDetails
           ? applicant.educationDetails.secondaryEducationDetails.type
@@ -207,9 +142,169 @@ const EducationDetails = ({
       intermediateEducationPicture:
         !loading && applicant !== null && applicant.educationDetails
           ? applicant.educationDetails.intermediateEducationDetails.picture
-          : ''
-    });
-  }, [applicant]);
+          : '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (
+        values.secondaryEducationType === '' ||
+        values.intermediateEducationType === ''
+      ) {
+        setAlert('All fields are required');
+      } else {
+        updateEducationDetails(values).then((result) => {
+          // Forward application here
+          if (result) {
+            applicantForwarded();
+          }
+        });
+      }
+    },
+    validationSchema: Yup.object().shape({
+      secondaryEducationType: Yup.string().required(
+        'Secondary education type is required'
+      ),
+      secondaryEducationInstitute: Yup.string().required(
+        'Secondary education type is required'
+      ),
+      secondaryEducationFieldOfStudy: Yup.string().required(
+        'Secondary education feild of study is required'
+      ),
+      secondaryEducationFrom: Yup.number()
+        .typeError('Secondary education from date must be a number')
+        .required('Secondary education from date is required')
+        .min(2000, 'Secondary education from date must be atleast 2000'),
+      secondaryEducationTo: Yup.number()
+        .typeError('Secondary education to date must be a number')
+        .required('Secondary education to date is required')
+        .min(2000, 'Secondary education to date must be atleast 2000'),
+      secondaryEducationObtainedMarks: Yup.number()
+        .typeError('Secondary education obtained marks must be a number')
+        .required('Secondary education obtained marks is required')
+        .min(1, 'Secondary education obtained marks must be atleast 1'),
+      secondaryEducationTotalMarks: Yup.number()
+        .typeError('Secondary education total marks must be a number')
+        .required('Secondary education total marks is required')
+        .min(1, 'Secondary education total marks must be atleast 1'),
+      secondaryEducationPicture: Yup.string().required(
+        'Secondary education certification picture is required'
+      ),
+      intermediateEducationType: Yup.string().required(
+        'Intermediate education type is required'
+      ),
+      intermediateEducationInstitute: Yup.string().required(
+        'Intermediate education institute is required'
+      ),
+      intermediateEducationFieldOfStudy: Yup.string().required(
+        'Intermediate education field of study is required'
+      ),
+      intermediateEducationFrom: Yup.number()
+        .typeError('Intermediate education from date must be a number')
+        .required('Intermediate education from date is required')
+        .min(2000, 'Intermediate education from date must be atleast 2000'),
+      intermediateEducationTo: Yup.number()
+        .typeError('Intermediate education to date must be a number')
+        .required('Intermediate education to date is required')
+        .min(2000, 'Intermediate education to date must be atleast 2000'),
+      intermediateEducationObtainedMarks: Yup.number()
+        .typeError('Intermediate education obtained marks must be a number')
+        .required('Intermediate education obtained marks is required')
+        .min(1, 'Intermediate education obtained marks must be atleast 1'),
+      intermediateEducationTotalMarks: Yup.number()
+        .typeError('Intermediate education total marks must be a number')
+        .required('Intermediate education total marks is required')
+        .min(1, 'Intermediate education total marks must be atleast 1'),
+      intermediateEducationPicture: Yup.string().required(
+        'Intermediate education certification picture is required'
+      ),
+    }),
+  });
+
+  // const [formData, setFormData] = useState({
+  //   secondaryEducationType: '',
+  //   secondaryEducationInstitute: '',
+  //   secondaryEducationFieldOfStudy: '',
+  //   secondaryEducationFrom: '',
+  //   secondaryEducationTo: '',
+  //   secondaryEducationObtainedMarks: '',
+  //   secondaryEducationTotalMarks: '',
+  //   secondaryEducationPicture: '',
+  //   intermediateEducationType: '',
+  //   intermediateEducationInstitute: '',
+  //   intermediateEducationFieldOfStudy: '',
+  //   intermediateEducationFrom: '',
+  //   intermediateEducationTo: '',
+  //   intermediateEducationObtainedMarks: '',
+  //   intermediateEducationTotalMarks: '',
+  //   intermediateEducationPicture: ''
+  // });
+
+  // const {
+  //   secondaryEducationType,
+  //   secondaryEducationInstitute,
+  //   secondaryEducationFieldOfStudy,
+  //   secondaryEducationFrom,
+  //   secondaryEducationTo,
+  //   secondaryEducationObtainedMarks,
+  //   secondaryEducationTotalMarks,
+  //   secondaryEducationPicture,
+  //   intermediateEducationType,
+  //   intermediateEducationInstitute,
+  //   intermediateEducationFieldOfStudy,
+  //   intermediateEducationFrom,
+  //   intermediateEducationTo,
+  //   intermediateEducationObtainedMarks,
+  //   intermediateEducationTotalMarks,
+  //   intermediateEducationPicture
+  // } = formData;
+
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
+
+  const onChangeImage = (e) => {
+    const name = e.target.name;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      // setFormData({ ...formData, [name]: e.target.result });
+      setFieldValue(name, e.target.result);
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   if (secondaryEducationType === '' || intermediateEducationType === '') {
+  //     setAlert('All fields are required');
+  //   } else {
+  //     updateEducationDetails(formData).then(result => {
+  //       // Forward application here
+  //       if (result) {
+  //         applicantForwarded();
+  //       }
+  //     });
+  //   }
+  // };
+
+  // const [getCurrentApplicantCalled, setGetCurrentApplicantCalled] = useState(
+  //   false
+  // );
+
+  useEffect(
+    () => {
+      // if (!getCurrentApplicantCalled) {
+      getCurrentApplicant();
+      // setGetCurrentApplicantCalled(true);
+      // }
+
+      // setFormData({
+
+      // });
+    },
+    [
+      // applicant
+    ]
+  );
 
   if (!loading && applicant !== null && applicant.status < 2) {
     return <Redirect to='/applicant/income-details' />;
@@ -233,7 +328,7 @@ const EducationDetails = ({
             <UndergraduateStatusStepper
               status={!loading && applicant !== null ? applicant.status : 0}
             />
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <div className='heading-primary'>Secondary Education</div>
@@ -245,8 +340,13 @@ const EducationDetails = ({
                       labelId='program-label'
                       label='Type'
                       name='secondaryEducationType'
-                      value={secondaryEducationType}
-                      onChange={e => onChange(e)}
+                      value={values.secondaryEducationType}
+                      onChange={handleChange}
+                      error={
+                        errors.secondaryEducationType &&
+                        touched.secondaryEducationType
+                      }
+                      helperText={errors.secondaryEducationType}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -263,9 +363,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='text'
                     name='secondaryEducationInstitute'
-                    value={secondaryEducationInstitute}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationInstitute}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationInstitute &&
+                      touched.secondaryEducationInstitute
+                    }
+                    helperText={errors.secondaryEducationInstitute}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -275,9 +379,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='text'
                     name='secondaryEducationFieldOfStudy'
-                    value={secondaryEducationFieldOfStudy}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationFieldOfStudy}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationFieldOfStudy &&
+                      touched.secondaryEducationFieldOfStudy
+                    }
+                    helperText={errors.secondaryEducationFieldOfStudy}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -287,9 +395,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='secondaryEducationFrom'
-                    value={secondaryEducationFrom}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationFrom}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationFrom &&
+                      touched.secondaryEducationFrom
+                    }
+                    helperText={errors.secondaryEducationFrom}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -299,9 +411,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='secondaryEducationTo'
-                    value={secondaryEducationTo}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationTo}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationTo &&
+                      touched.secondaryEducationTo
+                    }
+                    helperText={errors.secondaryEducationTo}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -311,9 +427,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='secondaryEducationObtainedMarks'
-                    value={secondaryEducationObtainedMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationObtainedMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationObtainedMarks &&
+                      touched.secondaryEducationObtainedMarks
+                    }
+                    helperText={errors.secondaryEducationObtainedMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -323,9 +443,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='secondaryEducationTotalMarks'
-                    value={secondaryEducationTotalMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.secondaryEducationTotalMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.secondaryEducationTotalMarks &&
+                      touched.secondaryEducationTotalMarks
+                    }
+                    helperText={errors.secondaryEducationTotalMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -335,14 +459,14 @@ const EducationDetails = ({
                       id='backPicture'
                       type='file'
                       name='secondaryEducationPicture'
-                      onChange={e => onChangeImage(e)}
+                      onChange={(e) => onChangeImage(e)}
                     />
                   </div>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <FormImage
                     title='Secondary Certificate'
-                    picture={secondaryEducationPicture}
+                    picture={values.secondaryEducationPicture}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -355,8 +479,8 @@ const EducationDetails = ({
                       labelId='program-label'
                       label='Type'
                       name='intermediateEducationType'
-                      value={intermediateEducationType}
-                      onChange={e => onChange(e)}
+                      value={values.intermediateEducationType}
+                      onChange={handleChange}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -374,9 +498,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='text'
                     name='intermediateEducationInstitute'
-                    value={intermediateEducationInstitute}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationInstitute}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationInstitute &&
+                      touched.intermediateEducationInstitute
+                    }
+                    helperText={errors.intermediateEducationInstitute}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={4}>
@@ -386,9 +514,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='text'
                     name='intermediateEducationFieldOfStudy'
-                    value={intermediateEducationFieldOfStudy}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationFieldOfStudy}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationFieldOfStudy &&
+                      touched.intermediateEducationFieldOfStudy
+                    }
+                    helperText={errors.intermediateEducationFieldOfStudy}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -398,9 +530,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='intermediateEducationFrom'
-                    value={intermediateEducationFrom}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationFrom}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationFrom &&
+                      touched.intermediateEducationFrom
+                    }
+                    helperText={errors.intermediateEducationFrom}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -410,9 +546,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='intermediateEducationTo'
-                    value={intermediateEducationTo}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationTo}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationTo &&
+                      touched.intermediateEducationTo
+                    }
+                    helperText={errors.intermediateEducationTo}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -422,9 +562,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='intermediateEducationObtainedMarks'
-                    value={intermediateEducationObtainedMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationObtainedMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationObtainedMarks &&
+                      touched.intermediateEducationObtainedMarks
+                    }
+                    helperText={errors.intermediateEducationObtainedMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={3}>
@@ -434,9 +578,13 @@ const EducationDetails = ({
                     variant='outlined'
                     type='number'
                     name='intermediateEducationTotalMarks'
-                    value={intermediateEducationTotalMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.intermediateEducationTotalMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.intermediateEducationTotalMarks &&
+                      touched.intermediateEducationTotalMarks
+                    }
+                    helperText={errors.intermediateEducationTotalMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -448,14 +596,14 @@ const EducationDetails = ({
                       id='backPicture'
                       type='file'
                       name='intermediateEducationPicture'
-                      onChange={e => onChangeImage(e)}
+                      onChange={(e) => onChangeImage(e)}
                     />
                   </div>
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <FormImage
                     title='Intermediate Certificate'
-                    picture={intermediateEducationPicture}
+                    picture={values.intermediateEducationPicture}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -482,16 +630,16 @@ EducationDetails.propTypes = {
   applicantForwarded: PropTypes.func.isRequired,
   applicant: PropTypes.object.isRequired,
   updateEducationDetails: PropTypes.func.isRequired,
-  setAlert: PropTypes.func.isRequired
+  setAlert: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
-  applicant: state.applicant
+const mapStateToProps = (state) => ({
+  applicant: state.applicant,
 });
 
 export default connect(mapStateToProps, {
   getCurrentApplicant,
   applicantForwarded,
   updateEducationDetails,
-  setAlert
+  setAlert,
 })(EducationDetails);

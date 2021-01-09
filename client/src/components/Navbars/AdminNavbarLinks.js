@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { makeStyles } from '@material-ui/core/styles';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Person from '@material-ui/icons/Person';
+import Person from '@material-ui/icons/AccountCircle';
 import Button from '../CustomButtons/Button.js';
 import {
   MenuItem,
@@ -15,14 +15,14 @@ import {
   Divider
 } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { logout } from '../../actions/adminEtc/auth';
+import { logout, loadUser } from '../../actions/adminEtc/auth';
 import { Link } from 'react-router-dom';
 
 import styles from '../../assets/jss/material-dashboard-react/components/headerLinksStyle.js';
 
 const useStyles = makeStyles(styles);
 
-const AdminNavbarLinks = ({ logout }) => {
+const AdminNavbarLinks = ({ logout, loadUser, auth: { user } }) => {
   const classes = useStyles();
   const [openProfile, setOpenProfile] = React.useState(null);
 
@@ -37,7 +37,10 @@ const AdminNavbarLinks = ({ logout }) => {
   const handleCloseProfile = () => {
     setOpenProfile(null);
   };
+  useEffect(() => {
+    loadUser()
 
+  }, [loadUser]);
   return (
     <div>
       <div className={classes.manager}>
@@ -51,6 +54,9 @@ const AdminNavbarLinks = ({ logout }) => {
           className={classes.buttonLink}
         >
           <Person className={classes.icons} />
+          {/* {user== null ? (<h2></h2>): (
+          <p>   {user.name}</p>
+          )} */}
           <Hidden mdUp implementation='css'>
             <p className={classes.linkText}>Profile</p>
           </Hidden>
@@ -78,24 +84,8 @@ const AdminNavbarLinks = ({ logout }) => {
               <Paper>
                 <ClickAwayListener onClickAway={handleCloseProfile}>
                   <MenuList role='menu'>
-                    <Link
-                      to={'/admin/create-profile'}
-                      className='text-decoration-none'
-                    >
-                      <MenuItem
-                        onClick={handleCloseProfile}
-                        className={classes.dropdownItem}
-                      >
-                        Create Profile
-                      </MenuItem>
-                    </Link>
-                    <MenuItem
-                      onClick={handleCloseProfile}
-                      className={classes.dropdownItem}
-                    >
-                      Settings
-                    </MenuItem>
-                    <Divider light />
+
+
                     <MenuItem
                       onClick={() => logout()}
                       className={classes.dropdownItem}
@@ -114,7 +104,15 @@ const AdminNavbarLinks = ({ logout }) => {
 };
 
 AdminNavbarLinks.propTypes = {
-  logout: PropTypes.func.isRequired
+  logout: PropTypes.func.isRequired,
+  loadUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
 };
 
-export default connect(null, { logout })(AdminNavbarLinks);
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+  profile: state.profile,
+});
+
+export default connect(mapStateToProps, { logout, loadUser })(AdminNavbarLinks);

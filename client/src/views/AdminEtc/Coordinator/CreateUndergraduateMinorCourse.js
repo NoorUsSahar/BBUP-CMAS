@@ -5,7 +5,7 @@ import { withRouter, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   createUndergraduateMinorCourse,
-  getAllUndergraduateCourses
+  getAllUndergraduateCourses,
 } from '../../../actions/adminEtc/course';
 import { getAllDepartments } from '../../../actions/adminEtc/department';
 import { getAllUndergraduatePrograms } from '../../../actions/adminEtc/program';
@@ -22,8 +22,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -32,11 +34,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -51,9 +53,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -69,121 +71,255 @@ const CreateUndergraduateMinorCourse = ({
   program: { loading: programLoading, undergraduatePrograms },
   department: { loading: departmentLoading, departments },
   section: { loading: sectionLoading, sections },
-  setAlert
+  setAlert,
 }) => {
   const classes = useStyles(styles);
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    creditHours: '',
-    fee: '',
-    preRequisite: '',
-    minimumAttendanceRequiredForTerminals: '',
-    courseLearningOutcomes: '',
-    programLearningOutcomes: '',
-    totalLectures: '',
-    lecturesTakenFaculty: '',
-    lecturesTakenStudent: '',
-    totalAssignments: '',
-    assignmentsTaken: '',
-    totalQuizes: '',
-    quizesTaken: '',
-    totalMidTerms: '',
-    midTermsTaken: '',
-    totalLabs: '',
-    labsTakenFaculty: '',
-    labsTakenStudent: '',
-    labManual: '',
-    labProjectTotalMarks: '',
-    labTerminalTotalMarks: '',
-    program: '',
-    department: '',
-    section: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      creditHours: '',
+      fee: '',
+      preRequisite: '',
+      minimumAttendanceRequiredForTerminals: '',
+      courseLearningOutcomes: '',
+      programLearningOutcomes: '',
+      totalLectures: '',
+      lecturesTakenFaculty: '',
+      lecturesTakenStudent: '',
+      totalAssignments: '',
+      assignmentsTaken: '',
+      totalQuizes: '',
+      quizesTaken: '',
+      totalMidTerms: '',
+      midTermsTaken: '',
+      totalLabs: '',
+      labsTakenFaculty: '',
+      labsTakenStudent: '',
+      labManual: '',
+      labProjectTotalMarks: '',
+      labTerminalTotalMarks: '',
+      program: '',
+      department: '',
+      section: '',
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      if (
+        values.program === '' ||
+        values.department === '' ||
+        values.section === ''
+      ) {
+        setAlert('Please fill all the fields in order to proceed.');
+      } else {
+        createUndergraduateMinorCourse(values, history);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Name is required'),
+      creditHours: Yup.number()
+        .typeError('Credit hours must be a number')
+        .required('Credit hours is required')
+        .min(3, 'Credit hours must be atleast 3')
+        .max(4, 'Credit hours must be atmost 4'),
+      fee: Yup.number()
+        .typeError('Fee must be a number')
+        .required('Fee is required')
+        .min(0, 'Fee must be atleast 0'),
+      preRequisite: Yup.string().required('Pre-requisite is required'),
+      minimumAttendanceRequiredForTerminals: Yup.number()
+        .typeError('Minimum attendance must be a number')
+        .required('Minimum attendance is required')
+        .min(0, 'Minimum attendance must be atleast 0'),
+      courseLearningOutcomes: Yup.string().required(
+        'Course learning outcome is required'
+      ),
+      programLearningOutcomes: Yup.string().required(
+        'Program learning outcome is required'
+      ),
+      totalLectures: Yup.number()
+        .typeError('Total lectures must be a number')
+        .required('Total lectures is required')
+        .min(0, 'Total lectures must be atleast 0'),
+      lecturesTakenFaculty: Yup.number()
+        .typeError('Lectures taken by faculty must be a number')
+        .required('Lectures taken by faculty is required')
+        .min(0, 'Lectures taken by faculty must be atleast 0'),
+      lecturesTakenStudent: Yup.number()
+        .typeError('Lectures taken by student must be a number')
+        .required('Lectures taken by student is required')
+        .min(0, 'Lectures taken by student must be atleast 0'),
+      totalAssignments: Yup.number()
+        .typeError('Total assignments by faculty must be a number')
+        .required('Total assignments by faculty is required')
+        .min(0, 'Total assignments by faculty must be atleast 0'),
+      assignmentsTaken: Yup.number()
+        .typeError('Assignments taken must be a number')
+        .required('Assignments taken is required')
+        .min(0, 'Assignments taken must be atleast 0'),
+      totalQuizes: Yup.number()
+        .typeError('Total quizes must be a number')
+        .required('Total quizes is required')
+        .min(0, 'Total quizes must be atleast 0'),
+      quizesTaken: Yup.number()
+        .typeError('Total quizes taken must be a number')
+        .required('Total quizes taken is required')
+        .min(0, 'Total quizes taken must be atleast 0'),
+      totalMidTerms: Yup.number()
+        .typeError('Total mid terms must be a number')
+        .required('Total mid terms is required')
+        .min(0, 'Total mid terms must be atleast 0'),
+      midTermsTaken: Yup.number()
+        .typeError('Total mid terms taken must be a number')
+        .required('Total mid terms taken is required')
+        .min(0, 'Total mid terms taken must be atleast 0'),
+      totalLabs: Yup.number()
+        .typeError('Total labs must be a number')
+        .required('Total labs is required')
+        .min(0, 'Total labs must be atleast 0'),
+      labsTakenFaculty: Yup.number()
+        .typeError('Total labs taken by faculty must be a number')
+        .required('Total labs taken by faculty is required')
+        .min(0, 'Total labs taken by faculty must be atleast 0'),
+      labsTakenStudent: Yup.number()
+        .typeError('Total labs taken by students must be a number')
+        .required('Total labs taken by students is required')
+        .min(0, 'Total labs taken by students must be atleast 0'),
+      labManual: Yup.string().required('Lab manual is required'),
+      labProjectTotalMarks: Yup.number()
+        .typeError('Lab project total marks must be a number')
+        .required('Lab project total marks is required')
+        .min(0, 'Lab project total marks must be atleast 0'),
+      labTerminalTotalMarks: Yup.number()
+        .typeError('Lab terminal total marks must be a number')
+        .required('Lab terminal total marks is required')
+        .min(0, 'Lab terminal total marks must be atleast 0'),
+      program: Yup.string().required('Program is required'),
+      department: Yup.string().required('Department is required'),
+      section: Yup.string().required('Section is required'),
+    }),
   });
 
-  const {
-    name,
-    description,
-    creditHours,
-    fee,
-    preRequisite,
-    minimumAttendanceRequiredForTerminals,
-    courseLearningOutcomes,
-    programLearningOutcomes,
-    totalLectures,
-    lecturesTakenFaculty,
-    lecturesTakenStudent,
-    totalAssignments,
-    assignmentsTaken,
-    totalQuizes,
-    quizesTaken,
-    totalMidTerms,
-    midTermsTaken,
-    totalLabs,
-    labsTakenFaculty,
-    labsTakenStudent,
-    labManual,
-    labProjectTotalMarks,
-    labTerminalTotalMarks,
-    program,
-    department,
-    section
-  } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  //   creditHours: '',
+  //   fee: '',
+  //   preRequisite: '',
+  //   minimumAttendanceRequiredForTerminals: '',
+  //   courseLearningOutcomes: '',
+  //   programLearningOutcomes: '',
+  //   totalLectures: '',
+  //   lecturesTakenFaculty: '',
+  //   lecturesTakenStudent: '',
+  //   totalAssignments: '',
+  //   assignmentsTaken: '',
+  //   totalQuizes: '',
+  //   quizesTaken: '',
+  //   totalMidTerms: '',
+  //   midTermsTaken: '',
+  //   totalLabs: '',
+  //   labsTakenFaculty: '',
+  //   labsTakenStudent: '',
+  //   labManual: '',
+  //   labProjectTotalMarks: '',
+  //   labTerminalTotalMarks: '',
+  //   program: '',
+  //   department: '',
+  //   section: '',
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const {
+  //   name,
+  //   description,
+  //   creditHours,
+  //   fee,
+  //   preRequisite,
+  //   minimumAttendanceRequiredForTerminals,
+  //   courseLearningOutcomes,
+  //   programLearningOutcomes,
+  //   totalLectures,
+  //   lecturesTakenFaculty,
+  //   lecturesTakenStudent,
+  //   totalAssignments,
+  //   assignmentsTaken,
+  //   totalQuizes,
+  //   quizesTaken,
+  //   totalMidTerms,
+  //   midTermsTaken,
+  //   totalLabs,
+  //   labsTakenFaculty,
+  //   labsTakenStudent,
+  //   labManual,
+  //   labProjectTotalMarks,
+  //   labTerminalTotalMarks,
+  //   program,
+  //   department,
+  //   section,
+  // } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    if (program === '' || department === '' || section === '') {
-      setAlert('Please fill all the fields in order to proceed.');
-    } else {
-      createUndergraduateMinorCourse(formData, history);
-    }
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (program === '' || department === '' || section === '') {
+  //     setAlert('Please fill all the fields in order to proceed.');
+  //   } else {
+  //     createUndergraduateMinorCourse(formData, history);
+  //   }
+  // };
+
+  // const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
 
   useEffect(() => {
-    if (!getAllDepartmentsCalled) {
-      getAllDepartments();
-      setGetAllDepartmentsCalled(true);
-    }
+    // if (!getAllDepartmentsCalled) {
+    getAllDepartments();
+    // setGetAllDepartmentsCalled(true);
+    // }
   }, []);
 
-  const [
-    getAllUndergraduateCoursesCalled,
-    setGetAllUndergraduateCoursesCalled
-  ] = useState(false);
+  // const [
+  //   getAllUndergraduateCoursesCalled,
+  //   setGetAllUndergraduateCoursesCalled,
+  // ] = useState(false);
 
   useEffect(() => {
-    if (!getAllUndergraduateCoursesCalled) {
-      getAllUndergraduateCourses();
-      setGetAllUndergraduateCoursesCalled(true);
-    }
+    // if (!getAllUndergraduateCoursesCalled) {
+    getAllUndergraduateCourses();
+    // setGetAllUndergraduateCoursesCalled(true);
+    // }
   }, []);
 
-  const [
-    getAllUndergraduateProgramsCalled,
-    setGetAllUndergraduateProgramsCalled
-  ] = useState(false);
+  // const [
+  //   getAllUndergraduateProgramsCalled,
+  //   setGetAllUndergraduateProgramsCalled,
+  // ] = useState(false);
 
   useEffect(() => {
-    if (!getAllUndergraduateProgramsCalled) {
-      getAllUndergraduatePrograms();
-      setGetAllUndergraduateProgramsCalled(true);
-    }
+    // if (!getAllUndergraduateProgramsCalled) {
+    getAllUndergraduatePrograms();
+    // setGetAllUndergraduateProgramsCalled(true);
+    // }
   }, []);
 
-  const [getAllSectionsCalled, setGetAllSectionsCalled] = useState(false);
+  // const [getAllSectionsCalled, setGetAllSectionsCalled] = useState(false);
 
   useEffect(() => {
-    if (!getAllSectionsCalled) {
-      getAllSections();
-      setGetAllSectionsCalled(true);
-    }
+    // if (!getAllSectionsCalled) {
+    getAllSections();
+    // setGetAllSectionsCalled(true);
+    // }
   }, []);
 
   return (
@@ -200,7 +336,7 @@ const CreateUndergraduateMinorCourse = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
@@ -209,9 +345,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -221,9 +358,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='text'
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.description}
+                    onChange={handleChange}
+                    error={errors.description && touched.description}
+                    helperText={errors.description}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -233,9 +371,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='creditHours'
-                    value={creditHours}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.creditHours}
+                    onChange={handleChange}
+                    error={errors.creditHours && touched.creditHours}
+                    helperText={errors.creditHours}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -245,9 +384,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='fee'
-                    value={fee}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.fee}
+                    onChange={handleChange}
+                    error={errors.fee && touched.fee}
+                    helperText={errors.fee}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -259,16 +399,17 @@ const CreateUndergraduateMinorCourse = ({
                       labelId='preRequisite-label'
                       label='preRequisite'
                       name='preRequisite'
-                      value={preRequisite}
-                      onChange={e => onChange(e)}
+                      value={values.preRequisite}
+                      onChange={handleChange}
+                      required={true}
                     >
-                      <MenuItem value=''>
+                      <MenuItem value='values.'>
                         <em>None</em>
                       </MenuItem>
                       {!courseLoading &&
                         // semester !== null &&
                         undergraduateCourses.length > 0 &&
-                        undergraduateCourses.map(course => (
+                        undergraduateCourses.map((course) => (
                           <MenuItem value={`${course._id}`}>
                             {course.name}
                           </MenuItem>
@@ -283,9 +424,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='minimumAttendanceRequiredForTerminals'
-                    value={minimumAttendanceRequiredForTerminals}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.minimumAttendanceRequiredForTerminals}
+                    onChange={handleChange}
+                    error={
+                      errors.minimumAttendanceRequiredForTerminals &&
+                      touched.minimumAttendanceRequiredForTerminals
+                    }
+                    helperText={errors.minimumAttendanceRequiredForTerminals}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -295,9 +440,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='text'
                     name='courseLearningOutcomes'
-                    value={courseLearningOutcomes}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.courseLearningOutcomes}
+                    onChange={handleChange}
+                    error={
+                      errors.courseLearningOutcomes &&
+                      touched.courseLearningOutcomes
+                    }
+                    helperText={errors.courseLearningOutcomes}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -307,9 +456,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='text'
                     name='programLearningOutcomes'
-                    value={programLearningOutcomes}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.programLearningOutcomes}
+                    onChange={handleChange}
+                    error={
+                      errors.programLearningOutcomes &&
+                      touched.programLearningOutcomes
+                    }
+                    helperText={errors.programLearningOutcomes}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -319,9 +472,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='totalLectures'
-                    value={totalLectures}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.totalLectures}
+                    onChange={handleChange}
+                    error={errors.totalLectures && touched.totalLectures}
+                    helperText={errors.totalLectures}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -331,9 +485,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='lecturesTakenFaculty'
-                    value={lecturesTakenFaculty}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.lecturesTakenFaculty}
+                    onChange={handleChange}
+                    error={
+                      errors.lecturesTakenFaculty &&
+                      touched.lecturesTakenFaculty
+                    }
+                    helperText={errors.lecturesTakenFaculty}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -343,9 +501,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='lecturesTakenStudent'
-                    value={lecturesTakenStudent}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.lecturesTakenStudent}
+                    onChange={handleChange}
+                    error={
+                      errors.lecturesTakenStudent &&
+                      touched.lecturesTakenStudent
+                    }
+                    helperText={errors.lecturesTakenStudent}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -355,9 +517,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='totalAssignments'
-                    value={totalAssignments}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.totalAssignments}
+                    onChange={handleChange}
+                    error={errors.totalAssignments && touched.totalAssignments}
+                    helperText={errors.totalAssignments}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -367,9 +530,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='assignmentsTaken'
-                    value={assignmentsTaken}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.assignmentsTaken}
+                    onChange={handleChange}
+                    error={errors.assignmentsTaken && touched.assignmentsTaken}
+                    helperText={errors.assignmentsTaken}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -379,9 +543,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='totalQuizes'
-                    value={totalQuizes}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.totalQuizes}
+                    onChange={handleChange}
+                    error={errors.totalQuizes && touched.totalQuizes}
+                    helperText={errors.totalQuizes}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -391,9 +556,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='quizesTaken'
-                    value={quizesTaken}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.quizesTaken}
+                    onChange={handleChange}
+                    error={errors.quizesTaken && touched.quizesTaken}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -403,9 +569,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='totalMidTerms'
-                    value={totalMidTerms}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.totalMidTerms}
+                    onChange={handleChange}
+                    error={errors.totalMidTerms && touched.totalMidTerms}
+                    helperText={errors.totalMidTerms}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -415,9 +582,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='midTermsTaken'
-                    value={midTermsTaken}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.midTermsTaken}
+                    onChange={handleChange}
+                    error={errors.midTermsTaken && touched.midTermsTaken}
+                    helperText={errors.midTermsTaken}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -427,9 +595,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='totalLabs'
-                    value={totalLabs}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.totalLabs}
+                    onChange={handleChange}
+                    error={errors.totalLabs && touched.totalLabs}
+                    helperText={errors.totalLabs}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -439,9 +608,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='labsTakenFaculty'
-                    value={labsTakenFaculty}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.labsTakenFaculty}
+                    onChange={handleChange}
+                    error={errors.labsTakenFaculty && touched.labsTakenFaculty}
+                    helperText={errors.labsTakenFaculty}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -451,9 +621,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='labsTakenStudent'
-                    value={labsTakenStudent}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.labsTakenStudent}
+                    onChange={handleChange}
+                    error={errors.labsTakenStudent && touched.labsTakenStudent}
+                    helperText={errors.labsTakenStudent}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -463,9 +634,10 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='text'
                     name='labManual'
-                    value={labManual}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.labManual}
+                    onChange={handleChange}
+                    error={errors.labManual && touched.labManual}
+                    helperText={errors.labManual}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -475,9 +647,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='labProjectTotalMarks'
-                    value={labProjectTotalMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.labProjectTotalMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.labProjectTotalMarks &&
+                      touched.labProjectTotalMarks
+                    }
+                    helperText={errors.labProjectTotalMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -487,9 +663,13 @@ const CreateUndergraduateMinorCourse = ({
                     variant='outlined'
                     type='number'
                     name='labTerminalTotalMarks'
-                    value={labTerminalTotalMarks}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.labTerminalTotalMarks}
+                    onChange={handleChange}
+                    error={
+                      errors.labTerminalTotalMarks &&
+                      touched.labTerminalTotalMarks
+                    }
+                    helperText={errors.labTerminalTotalMarks}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -499,8 +679,9 @@ const CreateUndergraduateMinorCourse = ({
                       labelId='program-label'
                       label='program'
                       name='program'
-                      value={program}
-                      onChange={e => onChange(e)}
+                      value={values.program}
+                      onChange={handleChange}
+                      required={true}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -508,7 +689,7 @@ const CreateUndergraduateMinorCourse = ({
                       {!programLoading &&
                         // semester !== null &&
                         undergraduatePrograms.length > 0 &&
-                        undergraduatePrograms.map(program => (
+                        undergraduatePrograms.map((program) => (
                           <MenuItem value={`${program._id}`}>
                             {program.name}
                           </MenuItem>
@@ -523,8 +704,9 @@ const CreateUndergraduateMinorCourse = ({
                       labelId='department-label'
                       label='department'
                       name='department'
-                      value={department}
-                      onChange={e => onChange(e)}
+                      value={values.department}
+                      onChange={handleChange}
+                      required={true}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -532,7 +714,7 @@ const CreateUndergraduateMinorCourse = ({
                       {!departmentLoading &&
                         // semester !== null &&
                         departments.length > 0 &&
-                        departments.map(department => (
+                        departments.map((department) => (
                           <MenuItem value={`${department._id}`}>
                             {department.name}
                           </MenuItem>
@@ -547,8 +729,9 @@ const CreateUndergraduateMinorCourse = ({
                       labelId='section-label'
                       label='section'
                       name='section'
-                      value={section}
-                      onChange={e => onChange(e)}
+                      value={values.section}
+                      onChange={handleChange}
+                      required={true}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -556,7 +739,7 @@ const CreateUndergraduateMinorCourse = ({
                       {!sectionLoading &&
                         // semester !== null &&
                         sections.length > 0 &&
-                        sections.map(section => (
+                        sections.map((section) => (
                           <MenuItem value={`${section._id}`}>
                             {section.name}
                           </MenuItem>
@@ -608,14 +791,14 @@ CreateUndergraduateMinorCourse.propTypes = {
   program: PropTypes.object.isRequired,
   department: PropTypes.object.isRequired,
   section: PropTypes.object.isRequired,
-  course: PropTypes.object.isRequired
+  course: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   department: state.department,
   section: state.section,
   program: state.program,
-  course: state.course
+  course: state.course,
 });
 
 export default connect(mapStateToProps, {
@@ -624,5 +807,5 @@ export default connect(mapStateToProps, {
   getAllUndergraduatePrograms,
   getAllDepartments,
   getAllSections,
-  setAlert
+  setAlert,
 })(withRouter(CreateUndergraduateMinorCourse));

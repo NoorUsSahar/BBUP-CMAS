@@ -98,3 +98,51 @@ console.log(id)
       });
     }
   };
+
+  //update Event
+  export const updateEvent = (formData, history) => async (
+    dispatch
+  ) => {
+    try {
+      const config = {
+        headers: {
+          Content_Type: "application/json",
+        },
+      };
+  
+      const data = {
+        title: formData.title,
+    start:  formData.start,
+    end:  formData.end 
+      }
+      const res = await axios.post(`/api/calendar/event/${formData.id}` , data, config);
+  
+      dispatch({
+        type: GET_EVENT,
+        payload: res.data,
+      });
+  
+      dispatch(setAlert( "Event Updated", "success"));
+  
+      //redirecting an action so using history to redirect component we use <Redirect/> instead
+      // if(!edit){
+      //   history.push('/dashboard');
+      // }
+      history.push("/faculty/calendar");
+    } catch (err) {
+      const errors = err.response;
+  
+      if (errors) {
+       console.log("There was an error")
+      //  err.forEach(error => dispatch(setAlert(error.msg , 'danger')))
+        // dispatch(setAlert(errors, "danger"));
+      } else if (err.request) {
+        dispatch(setAlert("err.msg", "danger"));
+      }
+  
+      dispatch({
+        type: EVENT_ERROR,
+        payload: { msg: errors.statusText, status: errors.status },
+      });
+    }
+  };

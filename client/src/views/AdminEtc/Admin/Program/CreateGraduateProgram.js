@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { getAllDepartments } from '../../../../actions/adminEtc/department';
@@ -17,8 +17,10 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -27,11 +29,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -46,9 +48,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -58,54 +60,109 @@ const CreateGraduateProgram = ({
   createGraduateProgram,
   department: { loading, departments },
   setAlert,
-  history
+  history,
 }) => {
   const classes = useStyles();
 
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    yearly: '',
-    semester: '',
-    feePerSemester: '',
-    minPercentageOfEquivalence: '',
-    minCGPA: '',
-    categoryOfDegree: '',
-    department: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      yearly: '',
+      semester: '',
+      feePerSemester: '',
+      minPercentageOfEquivalence: '',
+      minCGPA: '',
+      categoryOfDegree: '',
+      department: '',
+    },
+    // enableReinitialize: true,
+    onSubmit: (values) => {
+      if (values.categoryOfDegree === '' || values.department === '') {
+        setAlert('Please fill in the all the fields in order to proceed');
+      } else {
+        createGraduateProgram(values, history);
+      }
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Name is required'),
+      description: Yup.string().required('Description is required'),
+      yearly: Yup.number()
+        .typeError('Yearly duration must be a number')
+        .required('Yearly duration is required')
+        .min(1, 'Yearly duration must be atleast 1'),
+      semester: Yup.number()
+        .typeError('Semester duration must be a number')
+        .required('Semester duration is required')
+        .min(1, 'Semester duration must be atleast 1'),
+      feePerSemester: Yup.number()
+        .typeError('Fee per semester duration must be a number')
+        .required('Fee per semester duration is required')
+        .min(1, 'Fee per semester duration must be atleast 1'),
+      minPercentageOfEquivalence: Yup.number()
+        .typeError('Minimum percentage of equivalence must be a number')
+        .required('Minimum percentage of equivalence is required')
+        .min(1, 'Minimum percentage of equivalence must be atleast 1'),
+      minCGPA: Yup.number()
+        .typeError('Minimum CGPA must be a number')
+        .required('Minimum CGPA is required')
+        .min(1, 'Minimum CGPA must be atleast 1'),
+      categoryOfDegree: Yup.number().required('Category of degree is required'),
+      department: Yup.string().required('Description is required'),
+    }),
   });
 
-  const {
-    name,
-    description,
-    yearly,
-    semester,
-    feePerSemester,
-    minPercentageOfEquivalence,
-    minCGPA,
-    categoryOfDegree,
-    department
-  } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   description: '',
+  //   yearly: '',
+  //   semester: '',
+  //   feePerSemester: '',
+  //   minPercentageOfEquivalence: '',
+  //   minCGPA: '',
+  //   categoryOfDegree: '',
+  //   department: ''
+  // });
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const {
+  //   name,
+  //   description,
+  //   yearly,
+  //   semester,
+  //   feePerSemester,
+  //   minPercentageOfEquivalence,
+  //   minCGPA,
+  //   categoryOfDegree,
+  //   department
+  // } = formData;
 
-  const onSubmit = e => {
-    e.preventDefault();
-    if (categoryOfDegree === '' || department === '') {
-      setAlert('Please fill in the all the fields in order to proceed');
-    } else {
-      createGraduateProgram(formData, history);
-    }
-  };
+  // const onChange = e => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
+  // const onSubmit = e => {
+  //   e.preventDefault();
+  //   if (categoryOfDegree === '' || department === '') {
+  //     setAlert('Please fill in the all the fields in order to proceed');
+  //   } else {
+  //     createGraduateProgram(formData, history);
+  //   }
+  // };
+
+  // const [getAllDepartmentsCalled, setGetAllDepartmentsCalled] = useState(false);
 
   useEffect(() => {
-    if (!getAllDepartmentsCalled) {
-      getAllDepartments();
-      setGetAllDepartmentsCalled(true);
-    }
+    // if (!getAllDepartmentsCalled) {
+    getAllDepartments();
+    // setGetAllDepartmentsCalled(true);
+    // }
   }, []);
 
   return (
@@ -121,7 +178,7 @@ const CreateGraduateProgram = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
@@ -130,9 +187,10 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -142,9 +200,10 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='number'
                     name='yearly'
-                    value={yearly}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.yearly}
+                    onChange={handleChange}
+                    error={errors.yearly && touched.yearly}
+                    helperText={errors.yearly}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -154,9 +213,10 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='number'
                     name='semester'
-                    value={semester}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.semester}
+                    onChange={handleChange}
+                    error={errors.semester && touched.semester}
+                    helperText={errors.semester}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -166,9 +226,10 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='number'
                     name='feePerSemester'
-                    value={feePerSemester}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.feePerSemester}
+                    onChange={handleChange}
+                    error={errors.feePerSemester && touched.feePerSemester}
+                    helperText={errors.feePerSemester}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -178,9 +239,13 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='number'
                     name='minPercentageOfEquivalence'
-                    value={minPercentageOfEquivalence}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.minPercentageOfEquivalence}
+                    onChange={handleChange}
+                    error={
+                      errors.minPercentageOfEquivalence &&
+                      touched.minPercentageOfEquivalence
+                    }
+                    helperText={errors.minPercentageOfEquivalence}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
@@ -190,8 +255,12 @@ const CreateGraduateProgram = ({
                       labelId='cod-label'
                       label='Category of degree'
                       name='categoryOfDegree'
-                      value={categoryOfDegree}
-                      onChange={e => onChange(e)}
+                      value={values.categoryOfDegree}
+                      onChange={handleChange}
+                      error={
+                        errors.categoryOfDegree && touched.categoryOfDegree
+                      }
+                      helperText={errors.categoryOfDegree}
                     >
                       <MenuItem value=''>
                         <em>None</em>
@@ -213,15 +282,17 @@ const CreateGraduateProgram = ({
                       labelId='department-label'
                       label='Department'
                       name='department'
-                      value={department}
-                      onChange={e => onChange(e)}
+                      value={values.department}
+                      onChange={handleChange}
+                      error={errors.department && touched.department}
+                      helperText={errors.department}
                     >
                       <MenuItem value=''>
                         <em>None</em>
                       </MenuItem>
                       {!loading &&
                         departments.length > 0 &&
-                        departments.map(department => (
+                        departments.map((department) => (
                           <MenuItem value={`${department._id}`}>
                             {department.name}
                           </MenuItem>
@@ -236,9 +307,10 @@ const CreateGraduateProgram = ({
                     variant='outlined'
                     type='number'
                     name='minCGPA'
-                    value={minCGPA}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.minCGPA}
+                    onChange={handleChange}
+                    error={errors.minCGPA && touched.minCGPA}
+                    helperText={errors.minCGPA}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -250,9 +322,10 @@ const CreateGraduateProgram = ({
                     rows={5}
                     multiline
                     name='description'
-                    value={description}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.description}
+                    onChange={handleChange}
+                    error={errors.department && touched.department}
+                    helperText={errors.department}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -293,15 +366,15 @@ CreateGraduateProgram.propTypes = {
   createGraduateProgram: PropTypes.func.isRequired,
   setAlert: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
-  department: PropTypes.object.isRequired
+  department: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
-  department: state.department
+const mapStateToProps = (state) => ({
+  department: state.department,
 });
 
 export default connect(mapStateToProps, {
   getAllDepartments,
   setAlert,
-  createGraduateProgram
+  createGraduateProgram,
 })(withRouter(CreateGraduateProgram));

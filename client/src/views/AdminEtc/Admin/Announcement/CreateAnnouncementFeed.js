@@ -11,6 +11,8 @@ import Card from '../../../../components/Card/Card';
 import CardHeader from '../../../../components/Card/CardHeader';
 import CardBody from '../../../../components/Card/CardBody';
 import { TextField, Button } from '@material-ui/core';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 const styles = {
   cardCategoryWhite: {
@@ -19,11 +21,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#FFFFFF'
-    }
+      color: '#FFFFFF',
+    },
   },
   cardCategoryBlack: {
     '&,& a, & a:hover, & a:focus': {
@@ -31,11 +33,11 @@ const styles = {
       margin: '0',
       fontSize: '0.9rem',
       marginTop: '0',
-      marginBottom: '0'
+      marginBottom: '0',
     },
     '& a,& a:hover,& a:focus': {
-      color: '#000000'
-    }
+      color: '#000000',
+    },
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -50,9 +52,9 @@ const styles = {
       color: '#777',
       fontSize: '65%',
       fontWeight: '400',
-      lineHeight: '1'
-    }
-  }
+      lineHeight: '1',
+    },
+  },
 };
 
 const useStyles = makeStyles(styles);
@@ -62,7 +64,7 @@ const CreateAnnouncementFeed = ({
   createAdminAnnouncementFeed,
   announcement: { loading, feeds },
   auth: { user },
-  history
+  history,
 }) => {
   const classes = useStyles(styles);
 
@@ -79,7 +81,7 @@ const CreateAnnouncementFeed = ({
     }${date}`;
   };
 
-  const getFormattedDate = dateToFormat => {
+  const getFormattedDate = (dateToFormat) => {
     let d = new Date(dateToFormat);
 
     const date = d.getDate();
@@ -91,46 +93,85 @@ const CreateAnnouncementFeed = ({
     }${date}`;
   };
 
-  const [formData, setFormData] = useState({
-    name: '',
-    message: '',
-    startDate: '',
-    endDate: ''
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+  } = useFormik({
+    initialValues: {
+      name: '',
+      // !loading && user !== null && user.feeds ? user.feeds.name : null,
+      message: '',
+      // !loading && user !== null && user.feeds ? user.feeds.message : null,
+      startDate: getCurrentDate(),
+      endDate: getCurrentDate(),
+    },
+    enableReinitialize: true,
+    onSubmit: (values) => {
+      createAdminAnnouncementFeed(values, history);
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required('Please enter the name below'),
+      message: Yup.string().required('Please enter the message below'),
+      startDate: Yup.date().min(
+        new Date(Date.now() - 86400000),
+        'Start date is required'
+      ),
+      endDate: Yup.date().min(
+        Yup.ref('startDate'),
+        'End date cannot be before start date'
+      ),
+    }),
   });
 
-  const { name, message, startDate, endDate } = formData;
+  // const [formData, setFormData] = useState({
+  //   name: '',
+  //   message: '',
+  //   startDate: '',
+  //   endDate: '',
+  // });
 
-  const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+  // const { name, message, startDate, endDate } = formData;
 
-  useEffect(() => {
-    if (!getCurrentUserCalled) {
+  // const [getCurrentUserCalled, setGetCurrentUserCalled] = useState(false);
+
+  useEffect(
+    () => {
+      // if (!getCurrentUserCalled) {
       loadUser();
-      setGetCurrentUserCalled(true);
-    }
+      // setGetCurrentUserCalled(true);
+      // }
 
-    setFormData({
-      name: !loading && user !== null && user.feeds ? user.feeds.name : null,
-      message:
-        !loading && user !== null && user.feeds ? user.feeds.message : null,
-      startDate:
-        !loading && user !== null && user.feeds
-          ? getFormattedDate(user.feeds.startDate)
-          : getCurrentDate(),
-      endDate:
-        !loading && user !== null && user.feeds
-          ? getFormattedDate(user.feeds.endDate)
-          : getCurrentDate()
-    });
-  }, [user, feeds]);
+      // setFormData({
+      //   name: !loading && user !== null && user.feeds ? user.feeds.name : null,
+      //   message:
+      //     !loading && user !== null && user.feeds ? user.feeds.message : null,
+      //   startDate:
+      //     !loading && user !== null && user.feeds
+      //       ? getFormattedDate(user.feeds.startDate)
+      //       : getCurrentDate(),
+      //   endDate:
+      //     !loading && user !== null && user.feeds
+      //       ? getFormattedDate(user.feeds.endDate)
+      //       : getCurrentDate(),
+      // });
+    },
+    [
+      // user, feeds
+    ]
+  );
 
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // const onChange = (e) => {
+  //   setFormData({ ...formData, [e.target.name]: e.target.value });
+  // };
 
-  const onSubmit = e => {
-    e.preventDefault();
-    createAdminAnnouncementFeed(formData, history);
-  };
+  // const onSubmit = (e) => {
+  //   e.preventDefault();
+  //   createAdminAnnouncementFeed(formData, history);
+  // };
 
   return (
     <GridContainer>
@@ -143,54 +184,58 @@ const CreateAnnouncementFeed = ({
             </p>
           </CardHeader>
           <CardBody>
-            <form onSubmit={e => onSubmit(e)}>
+            <form onSubmit={handleSubmit}>
               <GridContainer>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
+                    error={errors.name && touched.name}
+                    helperText={errors.name}
                     className='form-control'
                     label='Announcement By (Enter your role)'
                     variant='outlined'
                     type='text'
                     name='name'
-                    value={name}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.name}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
+                    error={errors.startDate && touched.startDate}
+                    helperText={errors.startDate}
                     className='form-control'
                     label='StartDate'
                     variant='outlined'
                     type='date'
                     name='startDate'
-                    value={startDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.startDate}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={6}>
                   <TextField
+                    error={errors.endDate && touched.endDate}
+                    helperText={errors.endDate}
                     className='form-control'
                     label='End Date'
                     variant='outlined'
                     type='date'
                     name='endDate'
-                    value={endDate}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.endDate}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
                   <TextField
+                    error={errors.message && touched.message}
+                    helperText={errors.message}
                     className='form-control'
                     label='Message'
                     variant='outlined'
                     type='text'
                     name='message'
-                    value={message}
-                    onChange={e => onChange(e)}
-                    required={true}
+                    value={values.message}
+                    onChange={handleChange}
                   />
                 </GridItem>
                 <GridItem xs={12} sm={12} md={12}>
@@ -217,15 +262,15 @@ CreateAnnouncementFeed.propTypes = {
   createAdminAnnouncementFeed: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   announcement: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+  history: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   announcement: state.announcement,
-  auth: state.auth
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps, {
   createAdminAnnouncementFeed,
-  loadUser
+  loadUser,
 })(withRouter(CreateAnnouncementFeed));
