@@ -13,7 +13,7 @@ const oauth2Client = new OAuth2(
 oauth2Client.setCredentials({
   //refresh token added because the access token expires in 3600sec
   refresh_token:
-    "1//04qulBhl2WAbMCgYIARAAGAQSNwF-L9IrgAzgAJRGRm0c9aFyrgUpS0htdXKSqrziVM5HbB7Y3khSAoUhZlL2i0kPilDcqybzXA4",
+    "1//04QSSj0PkqH8QCgYIARAAGAQSNwF-L9IrhSs-yA3uixU3bEn2EwRqzJN_3g4CHLVya76gpanqFpCi4ueL5ziIjDTzNI5ZVMH_VJg",
 });
 const accessToken = oauth2Client.getAccessToken();
 
@@ -27,7 +27,7 @@ const smtpTransport = nodemailer.createTransport({
       "774050817939-q49sqkndrd5f0puk48jveptn9urgs9qm.apps.googleusercontent.com",
     clientSecret: "qLeO1es3JBrQCcvv_Kg9vQc3",
     refreshToken:
-    "1//04qulBhl2WAbMCgYIARAAGAQSNwF-L9IrgAzgAJRGRm0c9aFyrgUpS0htdXKSqrziVM5HbB7Y3khSAoUhZlL2i0kPilDcqybzXA4",
+    "1//04QSSj0PkqH8QCgYIARAAGAQSNwF-L9IrhSs-yA3uixU3bEn2EwRqzJN_3g4CHLVya76gpanqFpCi4ueL5ziIjDTzNI5ZVMH_VJg",
     accessToken: accessToken,
   },
   tls: {
