@@ -16,6 +16,7 @@ import chatbot from './adminEtc/chatbot';
 import faculties from './adminEtc/faculties';
 import student_profile from './adminEtc/student_profile';
 import event from './adminEtc/event'
+import student_grade from './adminEtc/studentgrade'
 
 export default combineReducers({
   auth,
@@ -35,5 +36,5 @@ export default combineReducers({
   faculties,
  survey,
  student_profile,
-
+  student_grade,
 });

@@ -40,6 +40,7 @@ app.use("/api/facultyAuth", require("./routes/api/facultysc/auth"));
 app.use("/api/profile", require("./routes/api/facultysc/profile"));
 app.use("/api/calendar", require("./routes/api/facultysc/calendarEvent"));
 app.use('/api/facultySurvey', require('./routes/api/facultysc/survey'));
+app.use('/api/studentgrade', require('./routes/api/facultysc/studentgrade'));
 
 
 

@@ -19,8 +19,12 @@ import Profile from "../views/Facultysc/UserProfile/UserProfile";
 import Survey from "../views/Facultysc/Survey/Survey";
 import SelectCourses from '../views/Facultysc/Student/SelectCourses';
 import AddMarks from '../views/Facultysc/Student/AddMarks.js'
-import AddInfo from '../views/Facultysc/Student/AddInfo.js'
+// import AddInfo from '../views/Facultysc/Student/AddInfo.js'
 
+import AddInfo from '../views/Facultysc/StudentGrade/AddInfo';
+import SelectAssessment from '../views/Facultysc/StudentGrade/SelectAssessment';
+import SelectSemester from '../views/Facultysc/StudentGrade/SelectSemester';
+import StudentProfile from '../views/Facultysc/StudentProfile/Profile';
 import routes from "../routes/Faculty";
 import styles from "../assets/jss/material-dashboard-react/layouts/adminStyle.js";
 import bgImage from "../assets/img/sidebar-2.jpg";
@@ -48,8 +52,12 @@ const switchRoutes = (
 
     <Route path="/faculty/add-marks" component={AddMarks} />
    <Route path="/faculty/select-course" component={SelectCourses} />
-   <Route path="/faculty/add-information" component={AddInfo}/>
+   {/* <Route path="/faculty/add-information" component={AddInfo}/> */}
 
+   <Route path='/faculty/add-information' component={AddInfo} />
+    <Route path='/faculty/add-assessment' component={SelectAssessment} />
+    <Route path="/faculty/select-semester" component={SelectSemester}/>
+<Route path="/faculty/student/:id" component={StudentProfile}/>
     <Route
       path="/faculty/create-profile"
       component={CreateProfile}

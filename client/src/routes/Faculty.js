@@ -12,7 +12,8 @@ import EditProfileIcon from '@material-ui/icons/PersonOutline';
 import SurveyIcon from '@material-ui/icons/Description';
 import Survey from '../views/Facultysc/Survey/Survey_Landing_Admin';
  import Dashboard from '../views/Facultysc/Dashboard/Dashboard';
-import StudentMarks from '../views/Facultysc/Student/Student'
+ import StudentMarks from '../views/Facultysc/Student/Student'
+ import StudentGrade from '../views/Facultysc/StudentGrade/StudentGradeDash'
  //  import Faculty from '../layouts/Dashboard'
 import Profiles from '../views/Facultysc/Profiles/Profiles';
  import EditProfile from '../views/Facultysc/Faculty/EditProfile'
@@ -67,7 +68,7 @@ component: Profiles,
     path: '/student-marks',
     name: 'Grades',
     icon: GradeIcon,
-    component: StudentMarks,
+    component: StudentGrade,
     layout: '/faculty',
   },
   // {
